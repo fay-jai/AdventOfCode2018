@@ -1,12 +1,18 @@
 defmodule AdventOfCode2018.Day1 do
   @input_path Path.join(File.cwd!(), "assets/day1_input.txt")
 
+  @doc """
+  Solution: 525
+  """
   def part1 do
     @input_path
     |> process_file
     |> Enum.sum
   end
 
+  @doc """
+  Solution: 75749
+  """
   def part2(num) do
     @input_path
     |> create_stream
