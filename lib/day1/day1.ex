@@ -82,9 +82,6 @@ defmodule AdventOfCode2018.Day1 do
 
   defp find_duplicate([], _), do: false
   defp find_duplicate([h|t], map_set) do
-    case MapSet.member?(map_set, h) do
-      true -> h
-      false -> find_duplicate(t, MapSet.put(map_set, h))
-    end
+    if MapSet.member?(map_set, h), do: h, else: find_duplicate(t, MapSet.put(map_set, h))
   end
 end
