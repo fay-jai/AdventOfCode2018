@@ -60,7 +60,7 @@ defmodule AdventOfCode2018.Day1 do
 
   defp process_file(file) do
     file
-    |> File.read!()
+    |> File.read!
     |> String.split(~r/\n/)
     |> Enum.map(&String.to_integer/1)
   end
