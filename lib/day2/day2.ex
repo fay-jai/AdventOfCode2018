@@ -20,13 +20,34 @@ defmodule AdventOfCode2018.Day2 do
   What is the checksum for your list of box IDs?
   """
   def part1 do
-    @input_path
-    |> process_file
+    data = @input_path |> process_file
+
+    num_two = data |> get_count(2)
+    num_three = data |> get_count(3)
+
+    num_two * num_three
   end
 
   defp process_file(file) do
     file
     |> File.read!
     |> String.split(~r/\n/)
+    |> Enum.map(&produce_string_hash/1)
+  end
+
+  defp produce_string_hash(string) do
+    string
+    |> String.split("", trim: true)
+    |> Enum.reduce(%{}, fn (char, acc) ->
+      char_count = if Map.has_key?(acc, char), do: acc[char] + 1, else: 1
+      Map.put(acc, char, char_count)
+    end)
+  end
+
+  defp get_count(data, num) do
+    data
+    |> Enum.map(fn (letter_hash) -> num in (letter_hash |> Map.values) end)
+    |> Enum.filter(&(&1 == true))
+    |> Enum.count
   end
 end
