@@ -9,6 +9,19 @@ defmodule AdventOfCode2018.Day3 do
     |> get_num_claims_greater_than_x(1)
   end
 
+  def part2() do
+    claimed_coordinates_hash = get_claimed_coordinates_hash(@input_path)
+
+    @input_path
+    |> process_file()
+    |> Enum.map(&convert_line_to_claim/1)
+    |> Enum.map(&update_claim_to_include_claimed_coordinates/1)
+    |> Enum.filter(fn (%Claim{ coords: coords }) ->
+        Enum.all?(coords, fn (coord) -> claimed_coordinates_hash[coord] == 1 end)
+    end)
+    |> List.first()
+  end
+
   def process_file(file) do
       file
       |> File.read!
@@ -30,6 +43,10 @@ defmodule AdventOfCode2018.Day3 do
           width: String.to_integer(width),
           height: String.to_integer(height)
       }
+  end
+
+  def update_claim_to_include_claimed_coordinates(claim) do
+    %Claim{ claim | coords: get_claimed_coordinates_from_claim(claim) }
   end
 
   def get_claimed_coordinates_from_claim(%Claim{x_cord: x_cord, y_cord: y_cord, width: width, height: height}) do
