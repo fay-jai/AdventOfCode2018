@@ -1,5 +1,5 @@
 defmodule AdventOfCode2018.Day1 do
-  @input_path Path.join(File.cwd!(), "assets/day1_input.txt")
+  alias AdventOfCode2018.Helpers
 
   @doc """
   A device shows a sequence of changes in frequency (your puzzle input). A value like +6 means the current frequency increases by 6; a value like -3 means the current frequency decreases by 3.
@@ -22,9 +22,7 @@ defmodule AdventOfCode2018.Day1 do
   Starting with a frequency of zero, what is the resulting frequency after all of the changes in frequency have been applied?
   """
   def part1 do
-    @input_path
-    |> process_file
-    |> Enum.sum
+    process_file() |> Enum.sum
   end
 
   @doc """
@@ -52,23 +50,18 @@ defmodule AdventOfCode2018.Day1 do
   What is the first frequency your device reaches twice?
   """
   def part2(num) do
-    @input_path
-    |> create_stream
+    create_stream()
     |> process_stream(num)
     |> find_duplicate
   end
 
-  defp process_file(file) do
-    file
-    |> File.read!
-    |> String.split(~r/\n/)
+  defp process_file() do
+    Helpers.read_file_and_parse(1)
     |> Enum.map(&String.to_integer/1)
   end
 
-  defp create_stream(file) do
-    file
-    |> process_file
-    |> Stream.cycle
+  defp create_stream() do
+    process_file() |> Stream.cycle
   end
 
   defp process_stream(stream, num) do
