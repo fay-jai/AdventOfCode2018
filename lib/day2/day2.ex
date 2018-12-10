@@ -1,5 +1,5 @@
 defmodule AdventOfCode2018.Day2 do
-  @input_path Path.join(File.cwd!(), "assets/day2_input.txt")
+  alias AdventOfCode2018.Helpers
 
   @doc """
   You scan the likely candidate boxes, counting the number that have an ID containing exactly two of any letter and then separately counting those with exactly three of any letter.
@@ -20,7 +20,7 @@ defmodule AdventOfCode2018.Day2 do
   What is the checksum for your list of box IDs?
   """
   def part1 do
-    data = @input_path |> process_file |> Enum.map(&produce_string_hash/1)
+    data = Helpers.read_file_and_parse(2) |> Enum.map(&produce_string_hash/1)
 
     num_two = data |> get_count(2)
     num_three = data |> get_count(3)
@@ -47,17 +47,10 @@ defmodule AdventOfCode2018.Day2 do
   """
   def part2 do
     [correct_box1, correct_box2] =
-      @input_path
-      |> process_file
+      Helpers.read_file_and_parse(2)
       |> get_correct_boxes
 
     get_common_characters(correct_box1, correct_box2)
-  end
-
-  defp process_file(file) do
-    file
-    |> File.read!
-    |> String.split(~r/\n/)
   end
 
   defp produce_string_hash(string) do
