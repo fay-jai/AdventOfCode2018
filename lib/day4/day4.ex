@@ -39,6 +39,19 @@ defmodule AdventOfCode2018.Day4 do
     String.to_integer(guard_id) * minute
   end
 
+  def part2() do
+    guard_id_to_day_hash = get_guard_id_to_day()
+
+    guard_ids = Map.keys(guard_id_to_day_hash)
+
+    Enum.each(guard_ids, fn (guard_id) ->
+      IO.puts "Guard #: #{guard_id}"
+      { minute, total } = get_minute_guard_sleeps_the_most(guard_id)
+      IO.puts "Minute #: #{minute}"
+      IO.puts "Total times: #{total}"
+    end)
+  end
+
   def get_guard_who_sleeps_the_most() do
     get_guard_id_to_day()
     |> Enum.reduce(%{}, fn ({ guard_id, dates }, hash) ->
@@ -54,14 +67,21 @@ defmodule AdventOfCode2018.Day4 do
 
     full_schedule = get_day_to_awake_schedule()
 
-    days_guarded
-    |> Enum.flat_map(fn (day) ->
-        full_schedule
-        |> Map.get(day)
-        |> Enum.reduce([], fn ({ minute, status }, result) -> if status == @asleep, do: [minute | result], else: result end)
-      end)
-    |> Enum.reduce(%{}, fn (minute ,hash) -> Map.put(hash, minute, Map.get(hash, minute, 0) + 1) end)
-    |> Enum.reduce(fn ({ minute, total }, { so_far_minute, so_far_total }) -> if so_far_total > total, do: { so_far_minute, so_far_total }, else: { minute, total } end)
+    minute_to_total_days_slept_for_guard =
+      days_guarded
+      |> Enum.flat_map(fn (day) ->
+          full_schedule
+          |> Map.get(day)
+          |> Enum.reduce([], fn ({ minute, status }, result) -> if status == @asleep, do: [minute | result], else: result end)
+        end)
+      |> Enum.reduce(%{}, fn (minute ,hash) -> Map.put(hash, minute, Map.get(hash, minute, 0) + 1) end)
+
+    if minute_to_total_days_slept_for_guard == %{} do
+      { nil, nil }
+    else
+      minute_to_total_days_slept_for_guard
+      |> Enum.reduce(fn ({ minute, total }, { so_far_minute, so_far_total }) -> if so_far_total > total, do: { so_far_minute, so_far_total }, else: { minute, total } end)
+    end
   end
 
   def get_guard_id_to_day() do
