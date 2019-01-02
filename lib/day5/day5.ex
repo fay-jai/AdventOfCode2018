@@ -1,10 +1,15 @@
 defmodule AdventOfCode2018.Day5 do
   alias AdventOfCode2018.Helpers
 
+
   def part1() do
+    get_initial_unreacted_polymer()
+    |> recurse()
+  end
+
+  def get_initial_unreacted_polymer() do
     Helpers.read_file_and_parse(5)
     |> List.first()
-    |> recurse()
   end
 
   def units_react?(unit, unit), do: false
