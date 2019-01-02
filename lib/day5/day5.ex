@@ -1,15 +1,34 @@
 defmodule AdventOfCode2018.Day5 do
   alias AdventOfCode2018.Helpers
 
+  @letters ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 
   def part1() do
     get_initial_unreacted_polymer()
     |> recurse()
   end
 
+  def part2() do
+    unreacted_polymer = get_initial_unreacted_polymer()
+
+    Enum.reduce(@letters, %{}, fn (letter, hash) ->
+      reduced_polymer = remove_unit_type_from_polymer(unreacted_polymer, letter)
+      fully_reacted_polymer = recurse(reduced_polymer)
+
+      Map.put(hash, letter, String.length(fully_reacted_polymer))
+    end)
+  end
+
   def get_initial_unreacted_polymer() do
     Helpers.read_file_and_parse(5)
     |> List.first()
+  end
+
+  def remove_unit_type_from_polymer(polymer, unit) do
+    polymer
+    |> String.split("", trim: true)
+    |> Enum.reject(fn (char) -> char == String.upcase(unit) || char == String.downcase(unit) end)
+    |> Enum.join("")
   end
 
   def units_react?(unit, unit), do: false
