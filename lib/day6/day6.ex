@@ -36,4 +36,10 @@ defmodule AdventOfCode2018.Day6 do
           if y_coord > max_y_coord, do: coord, else: max_coord
         end)
   end
+
+  def grid_coordinates(coordinates) do
+    {max_x, _} = coordinates |> max_coordinate("x")
+    {_, max_y} = coordinates |> max_coordinate("y")
+    for x <- 0..max_x, y <- 0..max_y, do: {x, y}
+  end
 end
