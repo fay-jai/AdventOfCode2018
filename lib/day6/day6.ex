@@ -12,4 +12,8 @@ defmodule AdventOfCode2018.Day6 do
           {x, y}
         end)
   end
+
+  def manhattan_distance({x_a, y_a}, {x_b, y_b}) do
+    abs(x_a - x_b) + abs(y_a - y_b)
+  end
 end
