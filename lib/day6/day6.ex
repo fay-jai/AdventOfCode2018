@@ -5,12 +5,26 @@ defmodule AdventOfCode2018.Day6 do
     Helpers.read_file_and_parse(6)
   end
 
-  def parse_input_into_coordinates() do
-    Helpers.read_file_and_parse(6)
-    |>  Enum.map(fn (string) ->
-          [x, y] = String.split(string, ", ")
-          {String.to_integer(x), String.to_integer(y)}
-        end)
+  def parse_input_into_coordinates_map() do
+    {_, coordinates_map } =
+      Helpers.read_file_and_parse(6)
+      |>  Enum.reduce({0, %{}}, fn (string, {count, map}) ->
+            [x, y] = String.split(string, ", ")
+
+            updated_map = Map.put(map, count, {String.to_integer(x), String.to_integer(y)})
+            updated_count = count + 1
+            { updated_count, updated_map }
+          end)
+
+    coordinates_map
+  end
+
+  def get_coordinates_keys() do
+    parse_input_into_coordinates_map() |> Map.keys()
+  end
+
+  def get_coordinates_values() do
+    parse_input_into_coordinates_map() |> Map.values()
   end
 
   def manhattan_distance({x_a, y_a}, {x_b, y_b}) do
