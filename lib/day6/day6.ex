@@ -5,6 +5,30 @@ defmodule AdventOfCode2018.Day6 do
     Helpers.read_file_and_parse(6)
   end
 
+  def get_closest_input_coordinate(coordinate) do
+    coordinates_map = parse_input_into_coordinates_map()
+    coordinates_keys = get_coordinates_keys()
+
+    mds = coordinates_keys
+    |>  Enum.map(fn (label) ->
+          label_coordinate = Map.get(coordinates_map, label)
+          {label, manhattan_distance(coordinate, label_coordinate)}
+        end)
+
+    min_md = Enum.reduce(mds, fn ({_, md}, min) ->
+      if md < min, do: md, else: min
+    end)
+
+    min_md_coordinates = Enum.filter(mds, fn ({ _, md }) -> md == min_md end)
+
+    if length(min_md_coordinates) > 1 do
+      "."
+    else
+      {label, _} = Enum.at(min_md_coordinates, 0)
+      label
+    end
+  end
+
   def parse_input_into_coordinates_map() do
     {_, coordinates_map } =
       Helpers.read_file_and_parse(6)
