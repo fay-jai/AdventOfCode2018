@@ -95,10 +95,7 @@ defmodule AdventOfCode2018.Day6 do
   def max_coordinate(coordinates, "x") do
     coordinates
     |>  Enum.reduce(fn (coord, max_coord) ->
-          {x_coord, _} = coord
-          {max_x_coord, _} = max_coord
-
-          if x_coord > max_x_coord, do: coord, else: max_coord
+          if coord > max_coord, do: coord, else: max_coord
         end)
   end
 
