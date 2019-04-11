@@ -18,6 +18,23 @@ defmodule Day6Test do
     {:ok, coordinates: coordinates}
   end
 
+  test "parse input coordinates correctly", state do
+    actual = Day6.parse_input_into_coordinates_map(state.coordinates)
+    expected = %{
+      0 => {8, 0},
+      1 => {2, 1},
+      2 => {7, 2},
+      3 => {1, 3},
+      4 => {3, 3},
+      5 => {5, 5},
+      6 => {3, 7},
+      7 => {9, 8},
+      8 => {0, 9}
+    }
+
+    assert actual == expected
+  end
+
   test "manhattan distance between 2 points" do
     point_a = {194, 200}
     point_b = {299, 244}

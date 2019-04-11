@@ -5,7 +5,7 @@ defmodule AdventOfCode2018.Day6 do
   end
 
   def bounding_coordinates() do
-    coordinates_map = parse_input_into_coordinates_map()
+    coordinates_map = parse_input_into_coordinates_map(Helpers.read_file_and_parse(6))
     coordinates_keys = get_coordinates_keys()
     coordinates_values = get_coordinates_values()
 
@@ -23,7 +23,7 @@ defmodule AdventOfCode2018.Day6 do
   end
 
   def get_closest_input_coordinate(coordinate) do
-    coordinates_map = parse_input_into_coordinates_map()
+    coordinates_map = parse_input_into_coordinates_map(Helpers.read_file_and_parse(6))
     coordinates_keys = get_coordinates_keys()
 
     mds = coordinates_keys
@@ -46,26 +46,26 @@ defmodule AdventOfCode2018.Day6 do
     end
   end
 
-  def parse_input_into_coordinates_map() do
+  def parse_input_into_coordinates_map(coordinates_data) do
     {_, coordinates_map } =
-      Helpers.read_file_and_parse(6)
+      coordinates_data
+      |>  String.split("\n", trim: true)
       |>  Enum.reduce({0, %{}}, fn (string, {count, map}) ->
             [x, y] = String.split(string, ", ")
 
-            updated_map = Map.put(map, count, {String.to_integer(x), String.to_integer(y)})
-            updated_count = count + 1
-            { updated_count, updated_map }
+            coordinate_tuple = {String.to_integer(x), String.to_integer(y)}
+            {count + 1, Map.put(map, count, coordinate_tuple)}
           end)
 
     coordinates_map
   end
 
   def get_coordinates_keys() do
-    parse_input_into_coordinates_map() |> Map.keys()
+    parse_input_into_coordinates_map(Helpers.read_file_and_parse(6)) |> Map.keys()
   end
 
   def get_coordinates_values() do
-    parse_input_into_coordinates_map() |> Map.values()
+    parse_input_into_coordinates_map(Helpers.read_file_and_parse(6)) |> Map.values()
   end
 
   def manhattan_distance({x_a, y_a}, {x_b, y_b}) do
