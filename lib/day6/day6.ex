@@ -6,8 +6,8 @@ defmodule AdventOfCode2018.Day6 do
 
   def bounding_coordinates() do
     coordinates_map = parse_input_into_coordinates_map(Helpers.read_file_and_parse(6))
-    coordinates_keys = get_coordinates_keys()
-    coordinates_values = get_coordinates_values()
+    coordinates_keys = get_coordinates_keys(Helpers.read_file_and_parse(6))
+    coordinates_values = get_coordinates_values(Helpers.read_file_and_parse(6))
 
     left = coordinates_values |> min_coordinate("x")
     right = coordinates_values |> max_coordinate("x")
@@ -24,7 +24,7 @@ defmodule AdventOfCode2018.Day6 do
 
   def get_closest_input_coordinate(coordinate) do
     coordinates_map = parse_input_into_coordinates_map(Helpers.read_file_and_parse(6))
-    coordinates_keys = get_coordinates_keys()
+    coordinates_keys = get_coordinates_keys(Helpers.read_file_and_parse(6))
 
     mds = coordinates_keys
     |>  Enum.map(fn (label) ->
@@ -60,16 +60,16 @@ defmodule AdventOfCode2018.Day6 do
     coordinates_map
   end
 
-  def get_coordinates_keys() do
-    parse_input_into_coordinates_map(Helpers.read_file_and_parse(6)) |> Map.keys()
+  def get_coordinates_keys(coordinates_data) do
+    coordinates_data
+    |> parse_input_into_coordinates_map()
+    |> Map.keys()
   end
 
-  def get_coordinates_values() do
-    parse_input_into_coordinates_map(Helpers.read_file_and_parse(6)) |> Map.values()
-  end
-
-  def manhattan_distance({x_a, y_a}, {x_b, y_b}) do
-    abs(x_a - x_b) + abs(y_a - y_b)
+  def get_coordinates_values(coordinates_data) do
+    coordinates_data
+    |> parse_input_into_coordinates_map()
+    |> Map.values()
   end
 
   def min_coordinate(coordinates, "x") do
@@ -116,5 +116,9 @@ defmodule AdventOfCode2018.Day6 do
     {max_x, _} = coordinates |> max_coordinate("x")
     {_, max_y} = coordinates |> max_coordinate("y")
     for y <- 0..max_y, x <- 0..max_x, do: {x, y}
+  end
+
+  def manhattan_distance({x_a, y_a}, {x_b, y_b}) do
+    abs(x_a - x_b) + abs(y_a - y_b)
   end
 end

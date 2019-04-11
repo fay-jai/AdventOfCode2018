@@ -35,6 +35,18 @@ defmodule Day6Test do
     assert actual == expected
   end
 
+  test "retrieve coordinate keys correctly", state do
+    actual = Day6.get_coordinates_keys(state.coordinates)
+    expected = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    assert actual == expected
+  end
+
+  test "retrieve coordinate values correctly", state do
+    actual = Day6.get_coordinates_values(state.coordinates)
+    expected = [{8, 0}, {2, 1}, {7, 2}, {1, 3}, {3, 3}, {5, 5}, {3, 7}, {9, 8}, {0, 9}]
+    assert actual == expected
+  end
+
   test "manhattan distance between 2 points" do
     point_a = {194, 200}
     point_b = {299, 244}
