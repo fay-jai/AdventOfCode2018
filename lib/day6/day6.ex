@@ -112,7 +112,7 @@ defmodule AdventOfCode2018.Day6 do
   def grid_coordinates(coordinates) do
     {max_x, _} = coordinates |> max_coordinate("x")
     {_, max_y} = coordinates |> max_coordinate("y")
-    for y <- 0..max_y, x <- 0..max_x, do: {x, y}
+    for x <- 0..max_y, y <- 0..max_x, do: {x, y}
   end
 
   def manhattan_distance({x_a, y_a}, {x_b, y_b}) do

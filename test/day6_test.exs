@@ -109,10 +109,25 @@ defmodule Day6Test do
     assert actual == {9, 8}
   end
 
+  test "retrieve grid coordinates correctly" do
+    coordinates = """
+    1, 0
+    2, 3
+    """
+
+    actual =
+      coordinates
+      |> Day6.get_coordinates_values()
+      |> Day6.grid_coordinates()
+      |> MapSet.new()
+
+    assert actual == MapSet.new([{0, 0}, {0, 1}, {0, 2}, {1, 0}, {1, 1}, {1, 2}, {2, 0}, {2, 1}, {2, 2}, {3, 0}, {3, 1}, {3, 2}])
+  end
+
   test "manhattan distance between 2 points" do
     point_a = {194, 200}
     point_b = {299, 244}
 
-    assert AdventOfCode2018.Day6.manhattan_distance(point_a, point_b) == (299 - 194) + (244 - 200)
+    assert Day6.manhattan_distance(point_a, point_b) == (299 - 194) + (244 - 200)
   end
 end
