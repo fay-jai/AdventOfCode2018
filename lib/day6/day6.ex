@@ -4,6 +4,18 @@ defmodule AdventOfCode2018.Day6 do
   def part1() do
   end
 
+  def coordinates_on_perimeter_of_grid_map(grid_map) do
+    num_rows = grid_map |> length()
+    num_cols = grid_map |> Enum.at(0) |> length()
+
+    first_row = Enum.at(grid_map, 0)
+    last_row = Enum.at(grid_map, num_rows - 1)
+    first_col = Enum.map(grid_map, fn (row) -> Enum.at(row, 0) end)
+    last_col = Enum.map(grid_map, fn (row) -> Enum.at(row, num_cols - 1) end)
+
+    MapSet.new(first_row ++ last_row ++ first_col ++ last_col)
+  end
+
   def produce_grid_map(coordinates_map) do
     coordinates_map
     |> get_coordinates_values()

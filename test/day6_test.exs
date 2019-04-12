@@ -179,4 +179,13 @@ defmodule Day6Test do
 
     assert actual == expected
   end
+
+  test "retrieve correct coordinate labels on perimeter of grid map", state do
+    grid_map = state.coordinates |> Day6.parse_input_into_coordinates_map() |> Day6.produce_grid_map()
+
+    actual = grid_map |> Day6.coordinates_on_perimeter_of_grid_map()
+    expected = MapSet.new([".", "0", "1", "2", "3", "6", "7", "8"])
+
+    assert actual == expected
+  end
 end
