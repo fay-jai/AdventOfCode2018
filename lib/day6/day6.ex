@@ -51,18 +51,10 @@ defmodule AdventOfCode2018.Day6 do
         end)
   end
 
-  def get_total_distance_for_input_coordinate(coordinate, coordinates_map) do
-    coordinates_map
-    |> get_coordinates()
-    |> Enum.reduce(0, fn (label_coordinate, total_distance) ->
-      total_distance + manhattan_distance(coordinate, label_coordinate)
-    end)
-  end
-
-  def get_total_distance_for_grid(build_bounding_grid, coordinates_map) do
-    build_bounding_grid
+  def get_total_distance_for_grid(bounding_grid, coordinates_map) do
+    bounding_grid
     |> List.flatten()
-    |> Enum.map(fn (coordinate) -> get_total_distance_for_input_coordinate(coordinate, coordinates_map) end)
+    |> Enum.map(fn (coordinate) -> total_manhattan_distance(coordinate, coordinates_map) end)
   end
 
   # General Helpers
@@ -135,5 +127,13 @@ defmodule AdventOfCode2018.Day6 do
       {label, _} = Enum.at(min_md_coordinates, 0)
       label
     end
+  end
+
+  def total_manhattan_distance(coordinate, coordinates_map) do
+    coordinates_map
+    |> get_coordinates()
+    |> Enum.reduce(0, fn (label_coordinate, total_distance) ->
+      total_distance + manhattan_distance(coordinate, label_coordinate)
+    end)
   end
 end
