@@ -22,7 +22,7 @@ defmodule AdventOfCode2018.Day6 do
   end
 
   def interior_coordinates_and_counts(grid_map) do
-    exterior_coordinate_keys = coordinates_on_perimeter_of_grid_map(grid_map)
+    exterior_coordinate_keys = perimeter_coordinates(grid_map)
 
     grid_map
     |> List.flatten()
@@ -30,7 +30,7 @@ defmodule AdventOfCode2018.Day6 do
     |> Enum.reduce(%{}, fn (label, memo) -> Map.update(memo, label, 1, &(&1 + 1)) end)
   end
 
-  def coordinates_on_perimeter_of_grid_map(grid_map) do
+  def perimeter_coordinates(grid_map) do
     num_rows = grid_map |> length()
     num_cols = grid_map |> Enum.at(0) |> length()
 
@@ -47,7 +47,7 @@ defmodule AdventOfCode2018.Day6 do
     |> get_coordinates()
     |> build_bounding_grid()
     |>  Enum.map(fn (row) ->
-          Enum.map(row, fn (coordinate) -> get_closest_input_coordinate(coordinate, coordinates_map) end)
+          Enum.map(row, fn (coordinate) -> closest_coordinate(coordinate, coordinates_map) end)
         end)
   end
 
@@ -63,33 +63,6 @@ defmodule AdventOfCode2018.Day6 do
     build_bounding_grid
     |> List.flatten()
     |> Enum.map(fn (coordinate) -> get_total_distance_for_input_coordinate(coordinate, coordinates_map) end)
-  end
-
-  def get_closest_input_coordinate(coordinate, coordinates_map) do
-    coordinates_keys = get_coordinate_labels(coordinates_map)
-
-    mds =
-      coordinates_keys
-        |>  Enum.map(fn (label) ->
-              label_coordinate = Map.get(coordinates_map, label)
-              {label, manhattan_distance(coordinate, label_coordinate)}
-            end)
-
-    {_, min_md} = Enum.reduce(mds, fn (current, acc) ->
-      {_, md} = current
-      {_, min} = acc
-
-      if md < min, do: current, else: acc
-    end)
-
-    min_md_coordinates = Enum.filter(mds, fn ({ _, md }) -> md == min_md end)
-
-    if length(min_md_coordinates) > 1 do
-      "."
-    else
-      {label, _} = Enum.at(min_md_coordinates, 0)
-      label
-    end
   end
 
   # General Helpers
@@ -136,4 +109,31 @@ defmodule AdventOfCode2018.Day6 do
   end
 
   def manhattan_distance({x_a, y_a}, {x_b, y_b}), do: abs(x_a - x_b) + abs(y_a - y_b)
+
+  def closest_coordinate(coordinate, coordinates_map) do
+    coordinates_keys = get_coordinate_labels(coordinates_map)
+
+    mds =
+      coordinates_keys
+        |>  Enum.map(fn (label) ->
+              label_coordinate = Map.get(coordinates_map, label)
+              {label, manhattan_distance(coordinate, label_coordinate)}
+            end)
+
+    {_, min_md} = Enum.reduce(mds, fn (current, acc) ->
+      {_, md} = current
+      {_, min} = acc
+
+      if md < min, do: current, else: acc
+    end)
+
+    min_md_coordinates = Enum.filter(mds, fn ({ _, md }) -> md == min_md end)
+
+    if length(min_md_coordinates) > 1 do
+      "."
+    else
+      {label, _} = Enum.at(min_md_coordinates, 0)
+      label
+    end
+  end
 end

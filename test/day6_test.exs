@@ -155,7 +155,7 @@ defmodule Day6Test do
     """
 
     coordinates_map = Day6.build_coordinates_map(coordinates)
-    actual = Day6.get_closest_input_coordinate({1, 1}, coordinates_map)
+    actual = Day6.closest_coordinate({1, 1}, coordinates_map)
     expected = "0"
 
     assert actual == expected
@@ -183,7 +183,7 @@ defmodule Day6Test do
   test "retrieve correct coordinate labels on perimeter of grid map", state do
     grid_map = state.coordinates |> Day6.build_coordinates_map() |> Day6.produce_grid_map()
 
-    actual = grid_map |> Day6.coordinates_on_perimeter_of_grid_map()
+    actual = grid_map |> Day6.perimeter_coordinates()
     expected = MapSet.new([".", "0", "1", "2", "3", "6", "7", "8"])
 
     assert actual == expected
