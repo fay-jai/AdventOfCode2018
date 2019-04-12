@@ -188,4 +188,13 @@ defmodule Day6Test do
 
     assert actual == expected
   end
+
+  test "retrieve map of interior coordinates and counts correctly", state do
+    grid_map = state.coordinates |> Day6.parse_input_into_coordinates_map() |> Day6.produce_grid_map()
+
+    actual = grid_map |> Day6.interior_coordinates_and_counts()
+    expected = %{"4" => 5, "5" => 10}
+
+    assert actual == expected
+  end
 end

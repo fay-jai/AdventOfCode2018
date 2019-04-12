@@ -4,6 +4,15 @@ defmodule AdventOfCode2018.Day6 do
   def part1() do
   end
 
+  def interior_coordinates_and_counts(grid_map) do
+    exterior_coordinate_keys = coordinates_on_perimeter_of_grid_map(grid_map)
+
+    grid_map
+    |> List.flatten()
+    |> Enum.reject(fn (label) -> MapSet.member?(exterior_coordinate_keys, label) end)
+    |> Enum.reduce(%{}, fn (label, memo) -> Map.update(memo, label, 1, &(&1 + 1)) end)
+  end
+
   def coordinates_on_perimeter_of_grid_map(grid_map) do
     num_rows = grid_map |> length()
     num_cols = grid_map |> Enum.at(0) |> length()
