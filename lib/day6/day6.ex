@@ -15,7 +15,7 @@ defmodule AdventOfCode2018.Day6 do
 
     coordinates_map
     |> get_coordinates()
-    |> grid_coordinates()
+    |> build_bounding_grid()
     |> get_total_distance_for_grid(coordinates_map)
     |> Enum.filter(fn (distance) -> distance < 10_000 end)
     |> Enum.count()
@@ -38,6 +38,14 @@ defmodule AdventOfCode2018.Day6 do
 
   def get_coordinate_labels(coordinates_map), do: coordinates_map |> Map.keys()
   def get_coordinates(coordinates_map), do: coordinates_map |> Map.values()
+
+  def build_bounding_grid(coordinates) do
+    {max_x, _} = coordinates |> max_coordinate("x")
+    {_, max_y} = coordinates |> max_coordinate("y")
+    grid = for y <- 0..max_y, x <- 0..max_x, do: {x, y}
+
+    Enum.chunk_every(grid, max_x + 1)
+  end
 
   def interior_coordinates_and_counts(grid_map) do
     exterior_coordinate_keys = coordinates_on_perimeter_of_grid_map(grid_map)
@@ -63,7 +71,7 @@ defmodule AdventOfCode2018.Day6 do
   def produce_grid_map(coordinates_map) do
     coordinates_map
     |> get_coordinates()
-    |> grid_coordinates()
+    |> build_bounding_grid()
     |>  Enum.map(fn (row) ->
           Enum.map(row, fn (coordinate) -> get_closest_input_coordinate(coordinate, coordinates_map) end)
         end)
@@ -77,8 +85,8 @@ defmodule AdventOfCode2018.Day6 do
     end)
   end
 
-  def get_total_distance_for_grid(grid_coordinates, coordinates_map) do
-    grid_coordinates
+  def get_total_distance_for_grid(build_bounding_grid, coordinates_map) do
+    build_bounding_grid
     |> List.flatten()
     |> Enum.map(fn (coordinate) -> get_total_distance_for_input_coordinate(coordinate, coordinates_map) end)
   end
@@ -127,13 +135,7 @@ defmodule AdventOfCode2018.Day6 do
         end)
   end
 
-  def grid_coordinates(coordinates) do
-    {max_x, _} = coordinates |> max_coordinate("x")
-    {_, max_y} = coordinates |> max_coordinate("y")
-    grid = for y <- 0..max_y, x <- 0..max_x, do: {x, y}
 
-    Enum.chunk_every(grid, max_x + 1)
-  end
 
   def manhattan_distance({x_a, y_a}, {x_b, y_b}) do
     abs(x_a - x_b) + abs(y_a - y_b)

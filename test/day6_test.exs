@@ -131,7 +131,7 @@ defmodule Day6Test do
       coordinates
       |> Day6.build_coordinates_map()
       |> Day6.get_coordinates()
-      |> Day6.grid_coordinates()
+      |> Day6.build_bounding_grid()
 
     assert actual == [
       [{0, 0}, {1, 0}, {2, 0}],
