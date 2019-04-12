@@ -2,6 +2,12 @@ defmodule AdventOfCode2018.Day6 do
   alias AdventOfCode2018.Helpers
 
   def part1() do
+    Helpers.read_file(6)
+    |> parse_input_into_coordinates_map()
+    |> produce_grid_map()
+    |> interior_coordinates_and_counts()
+    |> Map.values()
+    |> Enum.max()
   end
 
   def interior_coordinates_and_counts(grid_map) do
