@@ -4,22 +4,13 @@ defmodule AdventOfCode2018.Day6 do
   def part1() do
   end
 
-  def bounding_coordinates() do
-    coordinates_map = parse_input_into_coordinates_map(Helpers.read_file_and_parse(6))
-    coordinates_keys = get_coordinates_keys(coordinates_map)
-    coordinates_values = get_coordinates_values(coordinates_map)
-
-    left = coordinates_values |> min_coordinate("x")
-    right = coordinates_values |> max_coordinate("x")
-    top = coordinates_values |> min_coordinate("y")
-    bottom = coordinates_values |> max_coordinate("y")
-
-    %{
-      left: Enum.find(coordinates_keys, fn (key) -> Map.get(coordinates_map, key) == left end),
-      right: Enum.find(coordinates_keys, fn (key) -> Map.get(coordinates_map, key) == right end),
-      top: Enum.find(coordinates_keys, fn (key) -> Map.get(coordinates_map, key) == top end),
-      bottom: Enum.find(coordinates_keys, fn (key) -> Map.get(coordinates_map, key) == bottom end)
-    }
+  def produce_grid_map(coordinates_map) do
+    coordinates_map
+    |> get_coordinates_values()
+    |> grid_coordinates()
+    |>  Enum.map(fn (row) ->
+          Enum.map(row, fn (coordinate) -> get_closest_input_coordinate(coordinate, coordinates_map) end)
+        end)
   end
 
   def get_closest_input_coordinate(coordinate, coordinates_map) do

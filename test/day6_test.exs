@@ -148,20 +148,21 @@ defmodule Day6Test do
     assert Day6.manhattan_distance(point_a, point_b) == (299 - 194) + (244 - 200)
   end
 
-  test "retrieve closest input coordinate for all grid coordinates", state do
-    coordinates_map = Day6.parse_input_into_coordinates_map(state.coordinates)
-    grid_coordinates =
-      coordinates_map
-      |> Day6.get_coordinates_values()
-      |> Day6.grid_coordinates()
+  test "retrieve closest input coordinate for a grid coordinate" do
+    coordinates = """
+    1, 0
+    2, 3
+    """
 
-    actual =
-      grid_coordinates
-      |>  Enum.map(fn (row) ->
-            Enum.map(row, fn (coordinate) ->
-              Day6.get_closest_input_coordinate(coordinate, coordinates_map)
-            end)
-          end)
+    coordinates_map = Day6.parse_input_into_coordinates_map(coordinates)
+    actual = Day6.get_closest_input_coordinate({1, 1}, coordinates_map)
+    expected = "0"
+
+    assert actual == expected
+  end
+
+  test "produce grid map correctly", state do
+    actual = state.coordinates |> Day6.parse_input_into_coordinates_map() |> Day6.produce_grid_map()
 
     expected = [
       ["1", "1", "1", "1", "1", "0", "0", "0", "0", "0"],
