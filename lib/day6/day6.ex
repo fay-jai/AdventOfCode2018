@@ -14,12 +14,30 @@ defmodule AdventOfCode2018.Day6 do
     coordinates_map =  Helpers.read_file(6) |> build_coordinates_map()
 
     coordinates_map
-    |> get_coordinates_values()
+    |> get_coordinates()
     |> grid_coordinates()
     |> get_total_distance_for_grid(coordinates_map)
     |> Enum.filter(fn (distance) -> distance < 10_000 end)
     |> Enum.count()
   end
+
+  # General Helpers
+  def build_coordinates_map(coordinates_data) do
+    {_, coordinates_map } =
+      coordinates_data
+      |>  String.split("\n", trim: true)
+      |>  Enum.reduce({0, %{}}, fn (string, {count, map}) ->
+            [x, y] = String.split(string, ", ")
+
+            coordinate_tuple = {String.to_integer(x), String.to_integer(y)}
+            {count + 1, Map.put(map, "#{count}", coordinate_tuple)}
+          end)
+
+    coordinates_map
+  end
+
+  def get_coordinate_labels(coordinates_map), do: coordinates_map |> Map.keys()
+  def get_coordinates(coordinates_map), do: coordinates_map |> Map.values()
 
   def interior_coordinates_and_counts(grid_map) do
     exterior_coordinate_keys = coordinates_on_perimeter_of_grid_map(grid_map)
@@ -44,7 +62,7 @@ defmodule AdventOfCode2018.Day6 do
 
   def produce_grid_map(coordinates_map) do
     coordinates_map
-    |> get_coordinates_values()
+    |> get_coordinates()
     |> grid_coordinates()
     |>  Enum.map(fn (row) ->
           Enum.map(row, fn (coordinate) -> get_closest_input_coordinate(coordinate, coordinates_map) end)
@@ -53,7 +71,7 @@ defmodule AdventOfCode2018.Day6 do
 
   def get_total_distance_for_input_coordinate(coordinate, coordinates_map) do
     coordinates_map
-    |> get_coordinates_values()
+    |> get_coordinates()
     |> Enum.reduce(0, fn (label_coordinate, total_distance) ->
       total_distance + manhattan_distance(coordinate, label_coordinate)
     end)
@@ -66,7 +84,7 @@ defmodule AdventOfCode2018.Day6 do
   end
 
   def get_closest_input_coordinate(coordinate, coordinates_map) do
-    coordinates_keys = get_coordinates_keys(coordinates_map)
+    coordinates_keys = get_coordinate_labels(coordinates_map)
 
     mds =
     coordinates_keys
@@ -90,28 +108,6 @@ defmodule AdventOfCode2018.Day6 do
       {label, _} = Enum.at(min_md_coordinates, 0)
       label
     end
-  end
-
-  def build_coordinates_map(coordinates_data) do
-    {_, coordinates_map } =
-      coordinates_data
-      |>  String.split("\n", trim: true)
-      |>  Enum.reduce({0, %{}}, fn (string, {count, map}) ->
-            [x, y] = String.split(string, ", ")
-
-            coordinate_tuple = {String.to_integer(x), String.to_integer(y)}
-            {count + 1, Map.put(map, "#{count}", coordinate_tuple)}
-          end)
-
-    coordinates_map
-  end
-
-  def get_coordinates_keys(coordinates_map) do
-    coordinates_map |> Map.keys()
-  end
-
-  def get_coordinates_values(coordinates_map) do
-    coordinates_map |> Map.values()
   end
 
   def min_coordinate(coordinates, "x") do

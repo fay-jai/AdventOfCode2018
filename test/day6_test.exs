@@ -39,7 +39,7 @@ defmodule Day6Test do
     actual =
       state.coordinates
       |> Day6.build_coordinates_map()
-      |> Day6.get_coordinates_keys()
+      |> Day6.get_coordinate_labels()
 
     expected = ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
     assert actual == expected
@@ -49,7 +49,7 @@ defmodule Day6Test do
     actual =
       state.coordinates
       |> Day6.build_coordinates_map()
-      |> Day6.get_coordinates_values()
+      |> Day6.get_coordinates()
 
     expected = [{8, 0}, {2, 1}, {7, 2}, {1, 3}, {3, 3}, {5, 5}, {3, 7}, {9, 8}, {0, 9}]
     assert actual == expected
@@ -59,7 +59,7 @@ defmodule Day6Test do
     actual =
       state.coordinates
       |> Day6.build_coordinates_map()
-      |> Day6.get_coordinates_values()
+      |> Day6.get_coordinates()
       |> Day6.max_coordinate("x")
 
     assert actual == {9, 8}
@@ -82,7 +82,7 @@ defmodule Day6Test do
     actual =
       coordinates
       |> Day6.build_coordinates_map()
-      |> Day6.get_coordinates_values()
+      |> Day6.get_coordinates()
       |> Day6.max_coordinate("x")
 
     assert actual == {9, 9}
@@ -92,7 +92,7 @@ defmodule Day6Test do
     actual =
       state.coordinates
       |> Day6.build_coordinates_map()
-      |> Day6.get_coordinates_values()
+      |> Day6.get_coordinates()
       |> Day6.max_coordinate("y")
 
     assert actual == {0, 9}
@@ -115,7 +115,7 @@ defmodule Day6Test do
     actual =
       coordinates
       |> Day6.build_coordinates_map()
-      |> Day6.get_coordinates_values()
+      |> Day6.get_coordinates()
       |> Day6.max_coordinate("y")
 
     assert actual == {9, 8}
@@ -130,7 +130,7 @@ defmodule Day6Test do
     actual =
       coordinates
       |> Day6.build_coordinates_map()
-      |> Day6.get_coordinates_values()
+      |> Day6.get_coordinates()
       |> Day6.grid_coordinates()
 
     assert actual == [
