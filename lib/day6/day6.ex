@@ -6,8 +6,8 @@ defmodule AdventOfCode2018.Day6 do
 
   def bounding_coordinates() do
     coordinates_map = parse_input_into_coordinates_map(Helpers.read_file_and_parse(6))
-    coordinates_keys = get_coordinates_keys(Helpers.read_file_and_parse(6))
-    coordinates_values = get_coordinates_values(Helpers.read_file_and_parse(6))
+    coordinates_keys = get_coordinates_keys(coordinates_map)
+    coordinates_values = get_coordinates_values(coordinates_map)
 
     left = coordinates_values |> min_coordinate("x")
     right = coordinates_values |> max_coordinate("x")
@@ -22,18 +22,21 @@ defmodule AdventOfCode2018.Day6 do
     }
   end
 
-  def get_closest_input_coordinate(coordinate) do
-    coordinates_map = parse_input_into_coordinates_map(Helpers.read_file_and_parse(6))
-    coordinates_keys = get_coordinates_keys(Helpers.read_file_and_parse(6))
+  def get_closest_input_coordinate(coordinate, coordinates_map) do
+    coordinates_keys = get_coordinates_keys(coordinates_map)
 
-    mds = coordinates_keys
-    |>  Enum.map(fn (label) ->
-          label_coordinate = Map.get(coordinates_map, label)
-          {label, manhattan_distance(coordinate, label_coordinate)}
-        end)
+    mds =
+    coordinates_keys
+      |>  Enum.map(fn (label) ->
+            label_coordinate = Map.get(coordinates_map, label)
+            {label, manhattan_distance(coordinate, label_coordinate)}
+          end)
 
-    min_md = Enum.reduce(mds, fn ({_, md}, min) ->
-      if md < min, do: md, else: min
+    {_, min_md} = Enum.reduce(mds, fn (current, acc) ->
+      {_, md} = current
+      {_, min} = acc
+
+      if md < min, do: current, else: acc
     end)
 
     min_md_coordinates = Enum.filter(mds, fn ({ _, md }) -> md == min_md end)
@@ -54,22 +57,18 @@ defmodule AdventOfCode2018.Day6 do
             [x, y] = String.split(string, ", ")
 
             coordinate_tuple = {String.to_integer(x), String.to_integer(y)}
-            {count + 1, Map.put(map, count, coordinate_tuple)}
+            {count + 1, Map.put(map, "#{count}", coordinate_tuple)}
           end)
 
     coordinates_map
   end
 
-  def get_coordinates_keys(coordinates_data) do
-    coordinates_data
-    |> parse_input_into_coordinates_map()
-    |> Map.keys()
+  def get_coordinates_keys(coordinates_map) do
+    coordinates_map |> Map.keys()
   end
 
-  def get_coordinates_values(coordinates_data) do
-    coordinates_data
-    |> parse_input_into_coordinates_map()
-    |> Map.values()
+  def get_coordinates_values(coordinates_map) do
+    coordinates_map |> Map.values()
   end
 
   def min_coordinate(coordinates, "x") do
@@ -112,7 +111,9 @@ defmodule AdventOfCode2018.Day6 do
   def grid_coordinates(coordinates) do
     {max_x, _} = coordinates |> max_coordinate("x")
     {_, max_y} = coordinates |> max_coordinate("y")
-    for x <- 0..max_y, y <- 0..max_x, do: {x, y}
+    grid = for y <- 0..max_y, x <- 0..max_x, do: {x, y}
+
+    Enum.chunk_every(grid, max_x + 1)
   end
 
   def manhattan_distance({x_a, y_a}, {x_b, y_b}) do

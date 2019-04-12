@@ -21,28 +21,36 @@ defmodule Day6Test do
   test "parse input coordinates correctly", state do
     actual = Day6.parse_input_into_coordinates_map(state.coordinates)
     expected = %{
-      0 => {8, 0},
-      1 => {2, 1},
-      2 => {7, 2},
-      3 => {1, 3},
-      4 => {3, 3},
-      5 => {5, 5},
-      6 => {3, 7},
-      7 => {9, 8},
-      8 => {0, 9}
+      "0" => {8, 0},
+      "1" => {2, 1},
+      "2" => {7, 2},
+      "3" => {1, 3},
+      "4" => {3, 3},
+      "5" => {5, 5},
+      "6" => {3, 7},
+      "7" => {9, 8},
+      "8" => {0, 9}
     }
 
     assert actual == expected
   end
 
   test "retrieve coordinate keys correctly", state do
-    actual = Day6.get_coordinates_keys(state.coordinates)
-    expected = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    actual =
+      state.coordinates
+      |> Day6.parse_input_into_coordinates_map()
+      |> Day6.get_coordinates_keys()
+
+    expected = ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
     assert actual == expected
   end
 
   test "retrieve coordinate values correctly", state do
-    actual = Day6.get_coordinates_values(state.coordinates)
+    actual =
+      state.coordinates
+      |> Day6.parse_input_into_coordinates_map()
+      |> Day6.get_coordinates_values()
+
     expected = [{8, 0}, {2, 1}, {7, 2}, {1, 3}, {3, 3}, {5, 5}, {3, 7}, {9, 8}, {0, 9}]
     assert actual == expected
   end
@@ -50,6 +58,7 @@ defmodule Day6Test do
   test "retrieve coordinate with max x value correctly", state do
     actual =
       state.coordinates
+      |> Day6.parse_input_into_coordinates_map()
       |> Day6.get_coordinates_values()
       |> Day6.max_coordinate("x")
 
@@ -72,6 +81,7 @@ defmodule Day6Test do
 
     actual =
       coordinates
+      |> Day6.parse_input_into_coordinates_map()
       |> Day6.get_coordinates_values()
       |> Day6.max_coordinate("x")
 
@@ -81,6 +91,7 @@ defmodule Day6Test do
   test "retrieve coordinate with max y value correctly", state do
     actual =
       state.coordinates
+      |> Day6.parse_input_into_coordinates_map()
       |> Day6.get_coordinates_values()
       |> Day6.max_coordinate("y")
 
@@ -103,6 +114,7 @@ defmodule Day6Test do
 
     actual =
       coordinates
+      |> Day6.parse_input_into_coordinates_map()
       |> Day6.get_coordinates_values()
       |> Day6.max_coordinate("y")
 
@@ -117,11 +129,16 @@ defmodule Day6Test do
 
     actual =
       coordinates
+      |> Day6.parse_input_into_coordinates_map()
       |> Day6.get_coordinates_values()
       |> Day6.grid_coordinates()
-      |> MapSet.new()
 
-    assert actual == MapSet.new([{0, 0}, {0, 1}, {0, 2}, {1, 0}, {1, 1}, {1, 2}, {2, 0}, {2, 1}, {2, 2}, {3, 0}, {3, 1}, {3, 2}])
+    assert actual == [
+      [{0, 0}, {1, 0}, {2, 0}],
+      [{0, 1}, {1, 1}, {2, 1}],
+      [{0, 2}, {1, 2}, {2, 2}],
+      [{0, 3}, {1, 3}, {2, 3}]
+    ]
   end
 
   test "manhattan distance between 2 points" do
@@ -129,5 +146,36 @@ defmodule Day6Test do
     point_b = {299, 244}
 
     assert Day6.manhattan_distance(point_a, point_b) == (299 - 194) + (244 - 200)
+  end
+
+  test "retrieve closest input coordinate for all grid coordinates", state do
+    coordinates_map = Day6.parse_input_into_coordinates_map(state.coordinates)
+    grid_coordinates =
+      coordinates_map
+      |> Day6.get_coordinates_values()
+      |> Day6.grid_coordinates()
+
+    actual =
+      grid_coordinates
+      |>  Enum.map(fn (row) ->
+            Enum.map(row, fn (coordinate) ->
+              Day6.get_closest_input_coordinate(coordinate, coordinates_map)
+            end)
+          end)
+
+    expected = [
+      ["1", "1", "1", "1", "1", "0", "0", "0", "0", "0"],
+      ["1", "1", "1", "1", "1", ".", "2", "2", "0", "0"],
+      ["3", "3", "1", "4", "4", "2", "2", "2", "2", "2"],
+      ["3", "3", ".", "4", "4", ".", "2", "2", "2", "2"],
+      ["3", "3", ".", "4", ".", "5", "5", "2", "2", "."],
+      ["3", "3", ".", ".", "5", "5", "5", "5", "5", "7"],
+      ["8", ".", "6", "6", ".", "5", "5", "5", "7", "7"],
+      ["8", "6", "6", "6", "6", ".", ".", "7", "7", "7"],
+      ["8", "8", "6", "6", "6", ".", "7", "7", "7", "7"],
+      ["8", "8", "8", "6", "6", ".", "7", "7", "7", "7"],
+    ]
+
+    assert actual == expected
   end
 end
