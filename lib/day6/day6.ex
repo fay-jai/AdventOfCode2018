@@ -21,32 +21,6 @@ defmodule AdventOfCode2018.Day6 do
     |> Enum.count()
   end
 
-  # General Helpers
-  def build_coordinates_map(coordinates_data) do
-    {_, coordinates_map } =
-      coordinates_data
-      |>  String.split("\n", trim: true)
-      |>  Enum.reduce({0, %{}}, fn (string, {count, map}) ->
-            [x, y] = String.split(string, ", ")
-
-            coordinate_tuple = {String.to_integer(x), String.to_integer(y)}
-            {count + 1, Map.put(map, "#{count}", coordinate_tuple)}
-          end)
-
-    coordinates_map
-  end
-
-  def get_coordinate_labels(coordinates_map), do: coordinates_map |> Map.keys()
-  def get_coordinates(coordinates_map), do: coordinates_map |> Map.values()
-
-  def build_bounding_grid(coordinates) do
-    {max_x, _} = coordinates |> max_coordinate("x")
-    {_, max_y} = coordinates |> max_coordinate("y")
-    grid = for y <- 0..max_y, x <- 0..max_x, do: {x, y}
-
-    Enum.chunk_every(grid, max_x + 1)
-  end
-
   def interior_coordinates_and_counts(grid_map) do
     exterior_coordinate_keys = coordinates_on_perimeter_of_grid_map(grid_map)
 
@@ -95,11 +69,11 @@ defmodule AdventOfCode2018.Day6 do
     coordinates_keys = get_coordinate_labels(coordinates_map)
 
     mds =
-    coordinates_keys
-      |>  Enum.map(fn (label) ->
-            label_coordinate = Map.get(coordinates_map, label)
-            {label, manhattan_distance(coordinate, label_coordinate)}
-          end)
+      coordinates_keys
+        |>  Enum.map(fn (label) ->
+              label_coordinate = Map.get(coordinates_map, label)
+              {label, manhattan_distance(coordinate, label_coordinate)}
+            end)
 
     {_, min_md} = Enum.reduce(mds, fn (current, acc) ->
       {_, md} = current
@@ -116,6 +90,32 @@ defmodule AdventOfCode2018.Day6 do
       {label, _} = Enum.at(min_md_coordinates, 0)
       label
     end
+  end
+
+  # General Helpers
+  def build_coordinates_map(coordinates_data) do
+    {_, coordinates_map } =
+      coordinates_data
+      |>  String.split("\n", trim: true)
+      |>  Enum.reduce({0, %{}}, fn (string, {count, map}) ->
+            [x, y] = String.split(string, ", ")
+
+            coordinate_tuple = {String.to_integer(x), String.to_integer(y)}
+            {count + 1, Map.put(map, "#{count}", coordinate_tuple)}
+          end)
+
+    coordinates_map
+  end
+
+  def get_coordinate_labels(coordinates_map), do: coordinates_map |> Map.keys()
+  def get_coordinates(coordinates_map), do: coordinates_map |> Map.values()
+
+  def build_bounding_grid(coordinates) do
+    {max_x, _} = coordinates |> max_coordinate("x")
+    {_, max_y} = coordinates |> max_coordinate("y")
+    grid = for y <- 0..max_y, x <- 0..max_x, do: {x, y}
+
+    Enum.chunk_every(grid, max_x + 1)
   end
 
   def max_coordinate(coordinates, "x") do
@@ -135,9 +135,5 @@ defmodule AdventOfCode2018.Day6 do
         end)
   end
 
-
-
-  def manhattan_distance({x_a, y_a}, {x_b, y_b}) do
-    abs(x_a - x_b) + abs(y_a - y_b)
-  end
+  def manhattan_distance({x_a, y_a}, {x_b, y_b}), do: abs(x_a - x_b) + abs(y_a - y_b)
 end
