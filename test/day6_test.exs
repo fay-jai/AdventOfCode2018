@@ -197,4 +197,13 @@ defmodule Day6Test do
 
     assert actual == expected
   end
+
+  test "for a given input coordinate, it should get correct total distance from all coordinates", state do
+    coordinates_map = Day6.parse_input_into_coordinates_map(state.coordinates)
+
+    actual = Day6.get_total_distance_for_input_coordinate({0, 0}, coordinates_map)
+    expected = 8 + 3 + 9 + 4 + 6 + 10 + 10 + 17 + 9
+
+    assert actual == expected
+  end
 end

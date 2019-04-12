@@ -40,6 +40,14 @@ defmodule AdventOfCode2018.Day6 do
         end)
   end
 
+  def get_total_distance_for_input_coordinate(coordinate, coordinates_map) do
+    coordinates_map
+    |> get_coordinates_values()
+    |> Enum.reduce(0, fn (label_coordinate, total_distance) ->
+      total_distance + manhattan_distance(coordinate, label_coordinate)
+    end)
+  end
+
   def get_closest_input_coordinate(coordinate, coordinates_map) do
     coordinates_keys = get_coordinates_keys(coordinates_map)
 
