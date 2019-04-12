@@ -3,7 +3,7 @@ defmodule AdventOfCode2018.Day6 do
 
   def part1() do
     Helpers.read_file(6)
-    |> parse_input_into_coordinates_map()
+    |> build_coordinates_map()
     |> produce_grid_map()
     |> interior_coordinates_and_counts()
     |> Map.values()
@@ -11,7 +11,7 @@ defmodule AdventOfCode2018.Day6 do
   end
 
   def part2() do
-    coordinates_map =  Helpers.read_file(6) |> parse_input_into_coordinates_map()
+    coordinates_map =  Helpers.read_file(6) |> build_coordinates_map()
 
     coordinates_map
     |> get_coordinates_values()
@@ -92,7 +92,7 @@ defmodule AdventOfCode2018.Day6 do
     end
   end
 
-  def parse_input_into_coordinates_map(coordinates_data) do
+  def build_coordinates_map(coordinates_data) do
     {_, coordinates_map } =
       coordinates_data
       |>  String.split("\n", trim: true)

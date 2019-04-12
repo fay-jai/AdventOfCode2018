@@ -19,7 +19,7 @@ defmodule Day6Test do
   end
 
   test "parse input coordinates correctly", state do
-    actual = Day6.parse_input_into_coordinates_map(state.coordinates)
+    actual = Day6.build_coordinates_map(state.coordinates)
     expected = %{
       "0" => {8, 0},
       "1" => {2, 1},
@@ -38,7 +38,7 @@ defmodule Day6Test do
   test "retrieve coordinate keys correctly", state do
     actual =
       state.coordinates
-      |> Day6.parse_input_into_coordinates_map()
+      |> Day6.build_coordinates_map()
       |> Day6.get_coordinates_keys()
 
     expected = ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
@@ -48,7 +48,7 @@ defmodule Day6Test do
   test "retrieve coordinate values correctly", state do
     actual =
       state.coordinates
-      |> Day6.parse_input_into_coordinates_map()
+      |> Day6.build_coordinates_map()
       |> Day6.get_coordinates_values()
 
     expected = [{8, 0}, {2, 1}, {7, 2}, {1, 3}, {3, 3}, {5, 5}, {3, 7}, {9, 8}, {0, 9}]
@@ -58,7 +58,7 @@ defmodule Day6Test do
   test "retrieve coordinate with max x value correctly", state do
     actual =
       state.coordinates
-      |> Day6.parse_input_into_coordinates_map()
+      |> Day6.build_coordinates_map()
       |> Day6.get_coordinates_values()
       |> Day6.max_coordinate("x")
 
@@ -81,7 +81,7 @@ defmodule Day6Test do
 
     actual =
       coordinates
-      |> Day6.parse_input_into_coordinates_map()
+      |> Day6.build_coordinates_map()
       |> Day6.get_coordinates_values()
       |> Day6.max_coordinate("x")
 
@@ -91,7 +91,7 @@ defmodule Day6Test do
   test "retrieve coordinate with max y value correctly", state do
     actual =
       state.coordinates
-      |> Day6.parse_input_into_coordinates_map()
+      |> Day6.build_coordinates_map()
       |> Day6.get_coordinates_values()
       |> Day6.max_coordinate("y")
 
@@ -114,7 +114,7 @@ defmodule Day6Test do
 
     actual =
       coordinates
-      |> Day6.parse_input_into_coordinates_map()
+      |> Day6.build_coordinates_map()
       |> Day6.get_coordinates_values()
       |> Day6.max_coordinate("y")
 
@@ -129,7 +129,7 @@ defmodule Day6Test do
 
     actual =
       coordinates
-      |> Day6.parse_input_into_coordinates_map()
+      |> Day6.build_coordinates_map()
       |> Day6.get_coordinates_values()
       |> Day6.grid_coordinates()
 
@@ -154,7 +154,7 @@ defmodule Day6Test do
     2, 3
     """
 
-    coordinates_map = Day6.parse_input_into_coordinates_map(coordinates)
+    coordinates_map = Day6.build_coordinates_map(coordinates)
     actual = Day6.get_closest_input_coordinate({1, 1}, coordinates_map)
     expected = "0"
 
@@ -162,7 +162,7 @@ defmodule Day6Test do
   end
 
   test "produce grid map correctly", state do
-    actual = state.coordinates |> Day6.parse_input_into_coordinates_map() |> Day6.produce_grid_map()
+    actual = state.coordinates |> Day6.build_coordinates_map() |> Day6.produce_grid_map()
 
     expected = [
       ["1", "1", "1", "1", "1", "0", "0", "0", "0", "0"],
@@ -181,7 +181,7 @@ defmodule Day6Test do
   end
 
   test "retrieve correct coordinate labels on perimeter of grid map", state do
-    grid_map = state.coordinates |> Day6.parse_input_into_coordinates_map() |> Day6.produce_grid_map()
+    grid_map = state.coordinates |> Day6.build_coordinates_map() |> Day6.produce_grid_map()
 
     actual = grid_map |> Day6.coordinates_on_perimeter_of_grid_map()
     expected = MapSet.new([".", "0", "1", "2", "3", "6", "7", "8"])
@@ -190,7 +190,7 @@ defmodule Day6Test do
   end
 
   test "retrieve map of interior coordinates and counts correctly", state do
-    grid_map = state.coordinates |> Day6.parse_input_into_coordinates_map() |> Day6.produce_grid_map()
+    grid_map = state.coordinates |> Day6.build_coordinates_map() |> Day6.produce_grid_map()
 
     actual = grid_map |> Day6.interior_coordinates_and_counts()
     expected = %{"4" => 5, "5" => 10}
@@ -199,7 +199,7 @@ defmodule Day6Test do
   end
 
   test "for a given input coordinate, it should get correct total distance from all coordinates", state do
-    coordinates_map = Day6.parse_input_into_coordinates_map(state.coordinates)
+    coordinates_map = Day6.build_coordinates_map(state.coordinates)
 
     actual = Day6.get_total_distance_for_input_coordinate({0, 0}, coordinates_map)
     expected = 8 + 3 + 9 + 4 + 6 + 10 + 10 + 17 + 9
