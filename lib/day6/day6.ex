@@ -110,26 +110,6 @@ defmodule AdventOfCode2018.Day6 do
     end
   end
 
-  def min_coordinate(coordinates, "x") do
-    coordinates
-    |>  Enum.reduce(fn (coord, min_coord) ->
-          {x_coord, _} = coord
-          {min_x_coord, _} = min_coord
-
-          if x_coord < min_x_coord, do: coord, else: min_coord
-        end)
-  end
-
-  def min_coordinate(coordinates, "y") do
-    coordinates
-    |>  Enum.reduce(fn (coord, min_coord) ->
-          {_, y_coord} = coord
-          {_, min_y_coord} = min_coord
-
-          if y_coord < min_y_coord, do: coord, else: min_coord
-        end)
-  end
-
   def max_coordinate(coordinates, "x") do
     coordinates
     |>  Enum.reduce(fn (coord, max_coord) ->
