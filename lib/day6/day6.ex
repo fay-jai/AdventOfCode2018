@@ -10,6 +10,17 @@ defmodule AdventOfCode2018.Day6 do
     |> Enum.max()
   end
 
+  def part2() do
+    coordinates_map =  Helpers.read_file(6) |> parse_input_into_coordinates_map()
+
+    coordinates_map
+    |> get_coordinates_values()
+    |> grid_coordinates()
+    |> get_total_distance_for_grid(coordinates_map)
+    |> Enum.filter(fn (distance) -> distance < 10_000 end)
+    |> Enum.count()
+  end
+
   def interior_coordinates_and_counts(grid_map) do
     exterior_coordinate_keys = coordinates_on_perimeter_of_grid_map(grid_map)
 
@@ -46,6 +57,12 @@ defmodule AdventOfCode2018.Day6 do
     |> Enum.reduce(0, fn (label_coordinate, total_distance) ->
       total_distance + manhattan_distance(coordinate, label_coordinate)
     end)
+  end
+
+  def get_total_distance_for_grid(grid_coordinates, coordinates_map) do
+    grid_coordinates
+    |> List.flatten()
+    |> Enum.map(fn (coordinate) -> get_total_distance_for_input_coordinate(coordinate, coordinates_map) end)
   end
 
   def get_closest_input_coordinate(coordinate, coordinates_map) do
