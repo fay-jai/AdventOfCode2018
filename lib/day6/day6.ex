@@ -4,8 +4,8 @@ defmodule AdventOfCode2018.Day6 do
   def part1() do
     Helpers.read_file(6)
     |> build_coordinates_map()
-    |> produce_grid_map()
-    |> interior_coordinates_and_counts()
+    |> bounding_grid_with_closest_coordinate()
+    |> interior_coordinates_counts()
     |> Map.values()
     |> Enum.max()
   end
@@ -16,45 +16,9 @@ defmodule AdventOfCode2018.Day6 do
     coordinates_map
     |> get_coordinates()
     |> build_bounding_grid()
-    |> get_total_distance_for_grid(coordinates_map)
+    |> bounding_grid_total_distances(coordinates_map)
     |> Enum.filter(fn (distance) -> distance < 10_000 end)
     |> Enum.count()
-  end
-
-  def interior_coordinates_and_counts(grid_map) do
-    exterior_coordinate_keys = perimeter_coordinates(grid_map)
-
-    grid_map
-    |> List.flatten()
-    |> Enum.reject(fn (label) -> MapSet.member?(exterior_coordinate_keys, label) end)
-    |> Enum.reduce(%{}, fn (label, memo) -> Map.update(memo, label, 1, &(&1 + 1)) end)
-  end
-
-  def perimeter_coordinates(grid_map) do
-    num_rows = grid_map |> length()
-    num_cols = grid_map |> Enum.at(0) |> length()
-
-    first_row = Enum.at(grid_map, 0)
-    last_row = Enum.at(grid_map, num_rows - 1)
-    first_col = Enum.map(grid_map, fn (row) -> Enum.at(row, 0) end)
-    last_col = Enum.map(grid_map, fn (row) -> Enum.at(row, num_cols - 1) end)
-
-    MapSet.new(first_row ++ last_row ++ first_col ++ last_col)
-  end
-
-  def produce_grid_map(coordinates_map) do
-    coordinates_map
-    |> get_coordinates()
-    |> build_bounding_grid()
-    |>  Enum.map(fn (row) ->
-          Enum.map(row, fn (coordinate) -> closest_coordinate(coordinate, coordinates_map) end)
-        end)
-  end
-
-  def get_total_distance_for_grid(bounding_grid, coordinates_map) do
-    bounding_grid
-    |> List.flatten()
-    |> Enum.map(fn (coordinate) -> total_manhattan_distance(coordinate, coordinates_map) end)
   end
 
   # General Helpers
@@ -129,11 +93,47 @@ defmodule AdventOfCode2018.Day6 do
     end
   end
 
+  def bounding_grid_with_closest_coordinate(coordinates_map) do
+    coordinates_map
+    |> get_coordinates()
+    |> build_bounding_grid()
+    |>  Enum.map(fn (row) ->
+          Enum.map(row, fn (coordinate) -> closest_coordinate(coordinate, coordinates_map) end)
+        end)
+  end
+
+  def perimeter_coordinates(grid_map) do
+    num_rows = grid_map |> length()
+    num_cols = grid_map |> Enum.at(0) |> length()
+
+    first_row = Enum.at(grid_map, 0)
+    last_row = Enum.at(grid_map, num_rows - 1)
+    first_col = Enum.map(grid_map, fn (row) -> Enum.at(row, 0) end)
+    last_col = Enum.map(grid_map, fn (row) -> Enum.at(row, num_cols - 1) end)
+
+    MapSet.new(first_row ++ last_row ++ first_col ++ last_col)
+  end
+
+  def interior_coordinates_counts(grid_map) do
+    exterior_coordinate_keys = perimeter_coordinates(grid_map)
+
+    grid_map
+    |> List.flatten()
+    |> Enum.reject(fn (label) -> MapSet.member?(exterior_coordinate_keys, label) end)
+    |> Enum.reduce(%{}, fn (label, memo) -> Map.update(memo, label, 1, &(&1 + 1)) end)
+  end
+
   def total_manhattan_distance(coordinate, coordinates_map) do
     coordinates_map
     |> get_coordinates()
     |> Enum.reduce(0, fn (label_coordinate, total_distance) ->
       total_distance + manhattan_distance(coordinate, label_coordinate)
     end)
+  end
+
+  def bounding_grid_total_distances(bounding_grid, coordinates_map) do
+    bounding_grid
+    |> List.flatten()
+    |> Enum.map(fn (coordinate) -> total_manhattan_distance(coordinate, coordinates_map) end)
   end
 end

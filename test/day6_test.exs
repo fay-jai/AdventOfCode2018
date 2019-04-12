@@ -162,7 +162,7 @@ defmodule Day6Test do
   end
 
   test "produce grid map correctly", state do
-    actual = state.coordinates |> Day6.build_coordinates_map() |> Day6.produce_grid_map()
+    actual = state.coordinates |> Day6.build_coordinates_map() |> Day6.bounding_grid_with_closest_coordinate()
 
     expected = [
       ["1", "1", "1", "1", "1", "0", "0", "0", "0", "0"],
@@ -181,7 +181,7 @@ defmodule Day6Test do
   end
 
   test "retrieve correct coordinate labels on perimeter of grid map", state do
-    grid_map = state.coordinates |> Day6.build_coordinates_map() |> Day6.produce_grid_map()
+    grid_map = state.coordinates |> Day6.build_coordinates_map() |> Day6.bounding_grid_with_closest_coordinate()
 
     actual = grid_map |> Day6.perimeter_coordinates()
     expected = MapSet.new([".", "0", "1", "2", "3", "6", "7", "8"])
@@ -190,9 +190,9 @@ defmodule Day6Test do
   end
 
   test "retrieve map of interior coordinates and counts correctly", state do
-    grid_map = state.coordinates |> Day6.build_coordinates_map() |> Day6.produce_grid_map()
+    grid_map = state.coordinates |> Day6.build_coordinates_map() |> Day6.bounding_grid_with_closest_coordinate()
 
-    actual = grid_map |> Day6.interior_coordinates_and_counts()
+    actual = grid_map |> Day6.interior_coordinates_counts()
     expected = %{"4" => 5, "5" => 10}
 
     assert actual == expected
