@@ -42,4 +42,13 @@ defmodule AdventOfCode2018.Day7 do
           )
         end)
   end
+
+  def process_steps(steps_map, results) when map_size(steps_map) == 0, do: Enum.reverse(results)
+  def process_steps(steps_map, results) do
+    next_step = get_next_step(steps_map)
+
+    steps_map
+    |> delete_step(next_step)
+    |> process_steps([next_step | results])
+  end
 end

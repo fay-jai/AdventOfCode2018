@@ -93,4 +93,13 @@ defmodule Day7Test do
 
     assert actual == expected
   end
+
+  test "process steps correctly", state do
+    steps_map = state.steps |> Day7.build_steps_struct()
+
+    actual = Day7.process_steps(steps_map, [])
+    expected = ["C", "A", "B", "D", "F", "E"]
+
+    assert actual == expected
+  end
 end
