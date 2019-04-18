@@ -2,6 +2,35 @@ defmodule AdventOfCode2018.Day7 do
   alias AdventOfCode2018.Day7.Step
   alias AdventOfCode2018.Helpers
 
+  @job_times %{
+    "A" => 61,
+    "B" => 62,
+    "C" => 63,
+    "D" => 64,
+    "E" => 65,
+    "F" => 66,
+    "G" => 67,
+    "H" => 68,
+    "I" => 69,
+    "J" => 70,
+    "K" => 71,
+    "L" => 72,
+    "M" => 73,
+    "N" => 74,
+    "O" => 75,
+    "P" => 76,
+    "Q" => 77,
+    "R" => 78,
+    "S" => 79,
+    "T" => 80,
+    "U" => 81,
+    "V" => 82,
+    "W" => 83,
+    "X" => 84,
+    "Y" => 85,
+    "Z" => 86,
+  }
+
   def part1() do
     Helpers.read_file(7)
     |> build_steps_struct()
