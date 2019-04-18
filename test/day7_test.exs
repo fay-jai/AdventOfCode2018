@@ -2,6 +2,7 @@ defmodule Day7Test do
   use ExUnit.Case
 
   alias AdventOfCode2018.Day7
+  alias AdventOfCode2018.Day7.Step
 
   setup do
     steps = """
@@ -34,6 +35,21 @@ defmodule Day7Test do
   test "get distinct steps correctly", state do
     actual = state.steps |> Day7.parse_steps() |> Day7.distinct_steps()
     expected = MapSet.new(["A", "B", "C", "D", "E", "F"])
+
+    assert actual == expected
+  end
+
+  test "build steps struct correctly", state do
+    expected = state.steps |> Day7.build_steps_struct()
+
+    actual = %{
+      "A" => %Step{ job: "A", parents: MapSet.new(["C"]), children: MapSet.new(["B", "D"]) },
+      "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]) },
+      "C" => %Step{ job: "C", parents: MapSet.new(), children: MapSet.new(["A", "F"]) },
+      "D" => %Step{ job: "D", parents: MapSet.new(["A"]), children: MapSet.new(["E"]) },
+      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D", "F"]), children: MapSet.new([]) },
+      "F" => %Step{ job: "F", parents: MapSet.new(["C"]), children: MapSet.new(["E"]) }
+    }
 
     assert actual == expected
   end
