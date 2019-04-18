@@ -2,6 +2,13 @@ defmodule AdventOfCode2018.Day7 do
   alias AdventOfCode2018.Day7.Step
   alias AdventOfCode2018.Helpers
 
+  def part1() do
+    Helpers.read_file(7)
+    |> build_steps_struct()
+    |> process_steps([])
+    |> List.to_string()
+  end
+
   def parse_steps(steps_input) do
     steps_input
     |> String.split("\n", trim: true)
