@@ -105,14 +105,14 @@ defmodule Day7Test do
 
   test "add step to worker queue correctly" do
     actual = Day7.add_step_to_worker_queue([], "C", 0)
-    expected = [%{job: "C", start_time: 0, end_time: 62}]
+    expected = [%{job: "C", end_time: 62}]
 
     assert actual == expected
   end
 
   test "remove completed steps from worker queue correctly" do
     worker_queue = [
-      %{job: "C", start_time: 0, end_time: 62}
+      %{job: "C", end_time: 62}
     ]
 
     Enum.each(0..62, fn (current_time) ->
