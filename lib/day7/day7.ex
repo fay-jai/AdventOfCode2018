@@ -4,10 +4,24 @@ defmodule AdventOfCode2018.Day7 do
 
   def get_next_step(steps_map) do
     steps_map
-    |> Enum.filter(fn ({job, %Step{parents: parents}}) -> MapSet.size(parents) == 0 end)
+    |> Enum.filter(fn ({_, %Step{parents: parents}}) -> MapSet.size(parents) == 0 end)
     |> Enum.map(fn ({job, _step = %Step{}}) -> job end)
     |> Enum.sort()
     |> List.first()
+  end
+
+  def delete_step(steps_map, step) do
+    updated_steps_map = steps_map |> Map.delete(step)
+
+    Map.get(steps_map, step).children
+    |>  MapSet.to_list()
+    |>  Enum.reduce(updated_steps_map, fn (child, memo) ->
+          Map.put(
+            memo,
+            child,
+            %Step{ Map.get(memo, child) | parents: MapSet.delete(Map.get(memo, child).parents, step) }
+          )
+        end)
   end
 
   def build_steps_struct(steps_input) do

@@ -33,9 +33,9 @@ defmodule Day7Test do
   end
 
   test "build steps struct correctly", state do
-    expected = state.steps |> Day7.build_steps_struct()
+    actual = state.steps |> Day7.build_steps_struct()
 
-    actual = %{
+    expected = %{
       "A" => %Step{ job: "A", parents: MapSet.new(["C"]), children: MapSet.new(["B", "D"]) },
       "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]) },
       "C" => %Step{ job: "C", parents: MapSet.new(), children: MapSet.new(["A", "F"]) },
@@ -48,8 +48,8 @@ defmodule Day7Test do
   end
 
   test "get next step correctly", state do
-    expected = state.steps |> Day7.build_steps_struct() |> Day7.get_next_step()
-    actual = "C"
+    actual = state.steps |> Day7.build_steps_struct() |> Day7.get_next_step()
+    expected = "C"
 
     assert actual == expected
   end
@@ -63,8 +63,8 @@ defmodule Day7Test do
       "F" => %Step{ job: "F", parents: MapSet.new([]), children: MapSet.new(["E"]) }
     }
 
-    expected = steps_map |> Day7.get_next_step()
-    actual = "A"
+    actual = steps_map |> Day7.get_next_step()
+    expected = "A"
 
     assert actual == expected
   end
@@ -72,8 +72,24 @@ defmodule Day7Test do
   test "get next step correctly when there are none" do
     steps_map = %{}
 
-    expected = steps_map |> Day7.get_next_step()
-    actual = nil
+    actual = steps_map |> Day7.get_next_step()
+    expected = nil
+
+    assert actual == expected
+  end
+
+  test "delete step correctly", state do
+    steps_map = state.steps |> Day7.build_steps_struct()
+    next_step = steps_map |> Day7.get_next_step()
+
+    actual = Day7.delete_step(steps_map, next_step)
+    expected = %{
+      "A" => %Step{ job: "A", parents: MapSet.new([]), children: MapSet.new(["B", "D"]) },
+      "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]) },
+      "D" => %Step{ job: "D", parents: MapSet.new(["A"]), children: MapSet.new(["E"]) },
+      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D", "F"]), children: MapSet.new([]) },
+      "F" => %Step{ job: "F", parents: MapSet.new([]), children: MapSet.new(["E"]) }
+    }
 
     assert actual == expected
   end
