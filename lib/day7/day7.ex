@@ -97,4 +97,8 @@ defmodule AdventOfCode2018.Day7 do
     job = %{ job: step, start_time: current_time, end_time: current_time + @job_times[step] - 1 }
     [job | worker_queue]
   end
+
+  def remove_completed_steps_from_worker_queue(worker_queue, current_time) do
+    worker_queue |> Enum.reject(fn (%{end_time: end_time}) -> end_time < current_time end)
+  end
 end

@@ -123,4 +123,16 @@ defmodule Day7Test do
 
     assert actual == expected
   end
+
+  test "remove completed steps from worker queue correctly" do
+    worker_queue = [
+      %{job: "C", start_time: 0, end_time: 62}
+    ]
+
+    Enum.each(0..62, fn (current_time) ->
+      assert Day7.remove_completed_steps_from_worker_queue(worker_queue, current_time) == worker_queue
+    end)
+
+    assert Day7.remove_completed_steps_from_worker_queue(worker_queue, 63) == []
+  end
 end
