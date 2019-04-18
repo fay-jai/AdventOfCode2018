@@ -32,13 +32,6 @@ defmodule Day7Test do
     assert actual == expected
   end
 
-  test "get distinct steps correctly", state do
-    actual = state.steps |> Day7.parse_steps() |> Day7.distinct_steps()
-    expected = MapSet.new(["A", "B", "C", "D", "E", "F"])
-
-    assert actual == expected
-  end
-
   test "build steps struct correctly", state do
     expected = state.steps |> Day7.build_steps_struct()
 

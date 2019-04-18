@@ -20,8 +20,4 @@ defmodule AdventOfCode2018.Day7 do
     |> String.split("\n", trim: true)
     |> Enum.map(fn (<< "Step ", parent::bytes-size(1), " must be finished before step ", child::bytes-size(1), " can begin." >>) -> [parent, child] end)
   end
-
-  def distinct_steps(steps) do
-    steps |> List.flatten() |> MapSet.new()
-  end
 end
