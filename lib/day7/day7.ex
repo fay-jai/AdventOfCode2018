@@ -2,6 +2,14 @@ defmodule AdventOfCode2018.Day7 do
   alias AdventOfCode2018.Day7.Step
   alias AdventOfCode2018.Helpers
 
+  def get_next_step(steps_map) do
+    steps_map
+    |> Enum.filter(fn ({job, %Step{parents: parents}}) -> MapSet.size(parents) == 0 end)
+    |> Enum.map(fn ({job, _step = %Step{}}) -> job end)
+    |> Enum.sort()
+    |> List.first()
+  end
+
   def build_steps_struct(steps_input) do
     steps_input
     |> parse_steps()
