@@ -2,6 +2,7 @@ defmodule AdventOfCode2018.Day7 do
   alias AdventOfCode2018.Day7.Step
   alias AdventOfCode2018.Helpers
 
+  @num_workers 5
   @job_times %{
     "A" => 61,
     "B" => 62,
@@ -87,4 +88,7 @@ defmodule AdventOfCode2018.Day7 do
     |> delete_step(next_step)
     |> process_steps([next_step | results])
   end
+
+  def worker_queue_available?(worker_queue) when length(worker_queue) < @num_workers, do: true
+  def worker_queue_available?(__), do: false
 end
