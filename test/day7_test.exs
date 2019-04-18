@@ -102,4 +102,25 @@ defmodule Day7Test do
 
     assert actual == expected
   end
+
+  test "add step to empty worker queue correctly" do
+    actual = Day7.add_step_to_worker_queue([], "C", 0, true)
+    expected = [%{job: "C", start_time: 0, end_time: 62}]
+
+    assert actual == expected
+  end
+
+  test "add step to full worker queue correctly" do
+    worker_queue = [
+      %{job: "C", start_time: 0, end_time: 62},
+      %{job: "A", start_time: 63, end_time: 63},
+      %{job: "F", start_time: 63, end_time: 68},
+      %{job: "B", start_time: 64, end_time: 65},
+      %{job: "D", start_time: 66, end_time: 69},
+    ]
+    actual = Day7.add_step_to_worker_queue(worker_queue, "E", 70, false)
+    expected = worker_queue
+
+    assert actual == expected
+  end
 end
