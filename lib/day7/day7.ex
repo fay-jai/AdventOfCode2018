@@ -92,8 +92,7 @@ defmodule AdventOfCode2018.Day7 do
   def worker_queue_available?(worker_queue) when length(worker_queue) < @num_workers, do: true
   def worker_queue_available?(__), do: false
 
-  def add_step_to_worker_queue(worker_queue, _, _, _is_available = false), do: worker_queue
-  def add_step_to_worker_queue(worker_queue, step, current_time, _is_available) do
+  def add_step_to_worker_queue(worker_queue, step, current_time) do
     job = %{ job: step, start_time: current_time, end_time: current_time + @job_times[step] - 1 }
     [job | worker_queue]
   end
