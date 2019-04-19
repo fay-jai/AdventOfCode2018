@@ -91,6 +91,14 @@ defmodule AdventOfCode2018.Day7 do
   end
 
   # Part 2 Helpers
+  def part2(steps_map, steps_in_progress, current_time) do
+    # For each step in steps_in_progress:
+      # If step is completed as of current_time, then update steps_map by deleting step and removing step from steps_in_progress
+    # While steps_in_progress has space to take on additional steps and there are steps available:
+        # Update steps_map to add an end_time to the step and add step to steps_in_progress
+    # Recursively call part2 with current_time + 1
+  end
+
   def get_next_available_steps(steps_map) do
     steps_map
     |> Enum.filter(fn ({_, %Step{parents: parents, end_time: end_time}}) -> MapSet.size(parents) == 0 && is_nil(end_time) end)
@@ -98,7 +106,7 @@ defmodule AdventOfCode2018.Day7 do
     |> Enum.sort()
   end
 
-  def workers_available?(workers), do: MapSet.size(workers) < @num_workers
+  def can_handle_more_steps?(steps_in_progress), do: MapSet.size(steps_in_progress) < @num_workers
 
   def start_step(steps_map, step, current_time) do
     updated_step_struct = %{Map.get(steps_map, step) | end_time: current_time + @job_times[step] - 1}
@@ -125,4 +133,30 @@ defmodule AdventOfCode2018.Day7 do
       delete_step_part2(sm, sip, step, current_time)
     end)
   end
+
+  def add_steps(steps_map, steps_in_progress, current_time) do
+    _add_steps(
+      steps_map,
+      steps_in_progress,
+      current_time,
+      can_handle_more_steps?(steps_in_progress),
+      steps_map |> get_next_available_steps() |> length() > 0
+    )
+  end
+
+  def _add_steps(steps_map, steps_in_progress, current_time, _workers_available = true, _steps_available = true) do
+    [next_step | _] = get_next_available_steps(steps_map)
+
+    updated_steps_map = start_step(steps_map, next_step, current_time)
+    updated_steps_in_progress = MapSet.put(steps_in_progress, next_step)
+
+    _add_steps(
+      updated_steps_map,
+      updated_steps_in_progress,
+      current_time,
+      can_handle_more_steps?(updated_steps_in_progress),
+      updated_steps_map |> get_next_available_steps() |> length() > 0
+    )
+  end
+  def _add_steps(steps_map, steps_in_progress, _, _, _), do: {steps_map, steps_in_progress}
 end

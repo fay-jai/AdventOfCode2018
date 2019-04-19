@@ -225,4 +225,125 @@ defmodule Day7Test do
     }
     assert actual == expected
   end
+
+  test "add steps correctly", state do
+    steps_map = state.steps |> Day7.build_steps_struct()
+    steps_in_progress = MapSet.new()
+
+    # At current_time = 0
+    actual = Day7.add_steps(steps_map, steps_in_progress, 0)
+    updated_steps_map = %{
+      "A" => %Step{ job: "A", parents: MapSet.new(["C"]), children: MapSet.new(["B", "D"]), end_time: nil },
+      "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "C" => %Step{ job: "C", parents: MapSet.new(), children: MapSet.new(["A", "F"]), end_time: 62 },
+      "D" => %Step{ job: "D", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D", "F"]), children: MapSet.new([]), end_time: nil },
+      "F" => %Step{ job: "F", parents: MapSet.new(["C"]), children: MapSet.new(["E"]), end_time: nil }
+    }
+    updated_steps_in_progress = MapSet.new(["C"])
+    expected = {updated_steps_map, updated_steps_in_progress}
+    assert actual == expected
+
+    # From current_time = 1 through current_time = 62
+    Enum.each(1..62, fn (current_time) ->
+      actual = Day7.add_steps(updated_steps_map, updated_steps_in_progress, current_time)
+      expected = {updated_steps_map, updated_steps_in_progress}
+      assert actual == expected
+    end)
+
+    # At current_time = 63, delete "C" first
+    {updated_steps_map, updated_steps_in_progress} = Day7.delete_completed_steps(updated_steps_map, updated_steps_in_progress, 63)
+    actual = Day7.add_steps(updated_steps_map, updated_steps_in_progress, 63)
+    updated_steps_map = %{
+      "A" => %Step{ job: "A", parents: MapSet.new(), children: MapSet.new(["B", "D"]), end_time: 123 },
+      "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "D" => %Step{ job: "D", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D", "F"]), children: MapSet.new([]), end_time: nil },
+      "F" => %Step{ job: "F", parents: MapSet.new(), children: MapSet.new(["E"]), end_time: 128 }
+    }
+    updated_steps_in_progress = MapSet.new(["A", "F"])
+    assert actual == {updated_steps_map, updated_steps_in_progress}
+
+    # From current_time = 64 through current_time = 123
+    Enum.each(64..123, fn (current_time) ->
+      actual = Day7.add_steps(updated_steps_map, updated_steps_in_progress, current_time)
+      expected = {updated_steps_map, updated_steps_in_progress}
+      assert actual == expected
+    end)
+
+    # At current_time = 124, delete "A" first
+    {updated_steps_map, updated_steps_in_progress} = Day7.delete_completed_steps(updated_steps_map, updated_steps_in_progress, 124)
+    actual = Day7.add_steps(updated_steps_map, updated_steps_in_progress, 124)
+    updated_steps_map = %{
+      "B" => %Step{ job: "B", parents: MapSet.new([]), children: MapSet.new(["E"]), end_time: 185 },
+      "D" => %Step{ job: "D", parents: MapSet.new([]), children: MapSet.new(["E"]), end_time: 187 },
+      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D", "F"]), children: MapSet.new([]), end_time: nil },
+      "F" => %Step{ job: "F", parents: MapSet.new(), children: MapSet.new(["E"]), end_time: 128 }
+    }
+    updated_steps_in_progress = MapSet.new(["B", "D", "F"])
+    assert actual == {updated_steps_map, updated_steps_in_progress}
+
+    # From current_time = 125 through current_time = 128
+    Enum.each(125..128, fn (current_time) ->
+      actual = Day7.add_steps(updated_steps_map, updated_steps_in_progress, current_time)
+      expected = {updated_steps_map, updated_steps_in_progress}
+      assert actual == expected
+    end)
+
+    # At current_time = 129, delete "F" first
+    {updated_steps_map, updated_steps_in_progress} = Day7.delete_completed_steps(updated_steps_map, updated_steps_in_progress, 129)
+    actual = Day7.add_steps(updated_steps_map, updated_steps_in_progress, 129)
+    updated_steps_map = %{
+      "B" => %Step{ job: "B", parents: MapSet.new([]), children: MapSet.new(["E"]), end_time: 185 },
+      "D" => %Step{ job: "D", parents: MapSet.new([]), children: MapSet.new(["E"]), end_time: 187 },
+      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D"]), children: MapSet.new([]), end_time: nil },
+    }
+    updated_steps_in_progress = MapSet.new(["B", "D"])
+    assert actual == {updated_steps_map, updated_steps_in_progress}
+
+    # From current_time = 130 through current_time = 185
+    Enum.each(130..185, fn (current_time) ->
+      actual = Day7.add_steps(updated_steps_map, updated_steps_in_progress, current_time)
+      expected = {updated_steps_map, updated_steps_in_progress}
+      assert actual == expected
+    end)
+
+    # At current_time = 186, delete "B" first
+    {updated_steps_map, updated_steps_in_progress} = Day7.delete_completed_steps(updated_steps_map, updated_steps_in_progress, 186)
+    actual = Day7.add_steps(updated_steps_map, updated_steps_in_progress, 186)
+    updated_steps_map = %{
+      "D" => %Step{ job: "D", parents: MapSet.new([]), children: MapSet.new(["E"]), end_time: 187 },
+      "E" => %Step{ job: "E", parents: MapSet.new(["D"]), children: MapSet.new([]), end_time: nil },
+    }
+    updated_steps_in_progress = MapSet.new(["D"])
+    assert actual == {updated_steps_map, updated_steps_in_progress}
+
+    # At current_time = 187
+    actual = Day7.add_steps(updated_steps_map, updated_steps_in_progress, 187)
+    expected = {updated_steps_map, updated_steps_in_progress}
+    assert actual == expected
+
+    # At current_time = 188, delete "D" first
+    {updated_steps_map, updated_steps_in_progress} = Day7.delete_completed_steps(updated_steps_map, updated_steps_in_progress, 188)
+    actual = Day7.add_steps(updated_steps_map, updated_steps_in_progress, 188)
+    updated_steps_map = %{
+      "E" => %Step{ job: "E", parents: MapSet.new(), children: MapSet.new(), end_time: 252 },
+    }
+    updated_steps_in_progress = MapSet.new(["E"])
+    assert actual == {updated_steps_map, updated_steps_in_progress}
+
+    # From current_time = 189 through current_time = 252
+    Enum.each(189..252, fn (current_time) ->
+      actual = Day7.add_steps(updated_steps_map, updated_steps_in_progress, current_time)
+      expected = {updated_steps_map, updated_steps_in_progress}
+      assert actual == expected
+    end)
+
+    # At current_time = 253, delete "E" first
+    {updated_steps_map, updated_steps_in_progress} = Day7.delete_completed_steps(updated_steps_map, updated_steps_in_progress, 253)
+    actual = Day7.add_steps(updated_steps_map, updated_steps_in_progress, 253)
+    updated_steps_map = %{}
+    updated_steps_in_progress = MapSet.new()
+    assert actual == {updated_steps_map, updated_steps_in_progress}
+  end
 end
