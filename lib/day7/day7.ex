@@ -58,6 +58,7 @@ defmodule AdventOfCode2018.Day7 do
     end)
   end
 
+  # Part 1 Helpers
   def get_next_step(steps_map) do
     steps_map
     |> Enum.filter(fn ({_, %Step{parents: parents}}) -> MapSet.size(parents) == 0 end)
@@ -87,6 +88,14 @@ defmodule AdventOfCode2018.Day7 do
     steps_map
     |> delete_step(next_step)
     |> process_steps([next_step | results])
+  end
+
+  # Part 2 Helpers
+  def get_next_available_steps(steps_map) do
+    steps_map
+    |> Enum.filter(fn ({_, %Step{parents: parents, end_time: end_time}}) -> MapSet.size(parents) == 0 && is_nil(end_time) end)
+    |> Enum.map(fn ({job, _step = %Step{}}) -> job end)
+    |> Enum.sort()
   end
 
   def worker_queue_available?(worker_queue) when length(worker_queue) < @num_workers, do: true

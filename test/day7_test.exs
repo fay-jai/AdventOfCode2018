@@ -121,4 +121,37 @@ defmodule Day7Test do
 
     assert Day7.remove_completed_steps_from_worker_queue(worker_queue, 63) == []
   end
+
+  test "get available steps correctly", state do
+    steps_map = state.steps |> Day7.build_steps_struct()
+
+    # Initial case
+    actual = Day7.get_next_available_steps(steps_map)
+    expected = ["C"]
+    assert actual == expected
+
+    # Updated C's end_time
+    steps_map = %{steps_map | "C" => %{Map.get(steps_map, "C") | end_time: 62}}
+    actual = Day7.get_next_available_steps(steps_map)
+    expected = []
+    assert actual == expected
+
+    # Removed C
+    steps_map = Day7.delete_step(steps_map, "C")
+    actual = Day7.get_next_available_steps(steps_map)
+    expected = ["A", "F"]
+    assert actual == expected
+
+    # Updated A's end_time
+    steps_map = %{steps_map | "A" => %{Map.get(steps_map, "A") | end_time: 63}}
+    actual = Day7.get_next_available_steps(steps_map)
+    expected = ["F"]
+    assert actual == expected
+
+    # Updated F's end_time
+    steps_map = %{steps_map | "F" => %{Map.get(steps_map, "F") | end_time: 68}}
+    actual = Day7.get_next_available_steps(steps_map)
+    expected = []
+    assert actual == expected
+  end
 end
