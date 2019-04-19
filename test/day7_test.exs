@@ -154,4 +154,18 @@ defmodule Day7Test do
     expected = []
     assert actual == expected
   end
+
+  test "check whether step is completed is correct", state do
+    steps_map = state.steps |> Day7.build_steps_struct()
+
+    actual = Day7.is_step_completed?(steps_map, "C", 0)
+    assert actual == false
+
+    steps_map = %{steps_map | "C" => %{Map.get(steps_map, "C") | end_time: 62}}
+    actual = Day7.is_step_completed?(steps_map, "C", 62)
+    assert actual == false
+
+    actual = Day7.is_step_completed?(steps_map, "C", 63)
+    assert actual == true
+  end
 end
