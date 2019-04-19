@@ -183,4 +183,28 @@ defmodule Day7Test do
     actual = Day7.is_step_completed?(steps_map, "C", 63)
     assert actual == true
   end
+
+  test "delete step part 2 correctly", state do
+    steps_map = state.steps |> Day7.build_steps_struct()
+
+    actual = Day7.delete_step_part2(steps_map, "C", 0)
+    assert actual == steps_map
+
+    steps_map = Day7.start_step(steps_map, "C", 62)
+    actual = Day7.delete_step_part2(steps_map, "C", 0)
+    assert actual == steps_map
+
+    actual = Day7.delete_step_part2(steps_map, "C", 62)
+    assert actual == steps_map
+
+    actual = Day7.delete_step_part2(steps_map, "C", 63)
+    expected = %{
+      "A" => %Step{ job: "A", parents: MapSet.new([]), children: MapSet.new(["B", "D"]), end_time: nil },
+      "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "D" => %Step{ job: "D", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D", "F"]), children: MapSet.new([]), end_time: nil },
+      "F" => %Step{ job: "F", parents: MapSet.new([]), children: MapSet.new(["E"]), end_time: nil }
+    }
+    assert actual == expected
+  end
 end

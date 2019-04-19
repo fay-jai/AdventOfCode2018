@@ -110,6 +110,14 @@ defmodule AdventOfCode2018.Day7 do
     if is_nil(end_time), do: false, else: end_time < current_time
   end
 
+  def delete_step_part2(steps_map, step, current_time) do
+    if is_step_completed?(steps_map, step, current_time) do
+      delete_step(steps_map, step)
+    else
+      steps_map
+    end
+  end
+
   def add_step_to_worker_queue(worker_queue, step, current_time) do
     job = %{ job: step, end_time: current_time + @job_times[step] - 1 }
     [job | worker_queue]
