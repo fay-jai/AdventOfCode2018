@@ -117,4 +117,12 @@ defmodule AdventOfCode2018.Day7 do
       {steps_map, steps_in_progress}
     end
   end
+
+  def delete_completed_steps(steps_map, steps_in_progress, current_time) do
+    steps_in_progress
+    |> MapSet.to_list()
+    |> Enum.reduce({steps_map, steps_in_progress}, fn (step, {sm, sip}) ->
+      delete_step_part2(sm, sip, step, current_time)
+    end)
+  end
 end
