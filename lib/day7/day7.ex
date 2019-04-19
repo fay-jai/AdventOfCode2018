@@ -100,6 +100,11 @@ defmodule AdventOfCode2018.Day7 do
 
   def workers_available?(workers), do: MapSet.size(workers) < @num_workers
 
+  def start_step(steps_map, step, end_time) do
+    updated_step_struct = %{Map.get(steps_map, step) | end_time: end_time}
+    Map.put(steps_map, step, updated_step_struct)
+  end
+
   def is_step_completed?(steps_map, step, current_time) do
     end_time = steps_map[step].end_time
     if is_nil(end_time), do: false, else: end_time < current_time

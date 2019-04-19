@@ -36,12 +36,12 @@ defmodule Day7Test do
     actual = state.steps |> Day7.build_steps_struct()
 
     expected = %{
-      "A" => %Step{ job: "A", parents: MapSet.new(["C"]), children: MapSet.new(["B", "D"]) },
-      "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]) },
-      "C" => %Step{ job: "C", parents: MapSet.new(), children: MapSet.new(["A", "F"]) },
-      "D" => %Step{ job: "D", parents: MapSet.new(["A"]), children: MapSet.new(["E"]) },
-      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D", "F"]), children: MapSet.new([]) },
-      "F" => %Step{ job: "F", parents: MapSet.new(["C"]), children: MapSet.new(["E"]) }
+      "A" => %Step{ job: "A", parents: MapSet.new(["C"]), children: MapSet.new(["B", "D"]), end_time: nil },
+      "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "C" => %Step{ job: "C", parents: MapSet.new(), children: MapSet.new(["A", "F"]), end_time: nil },
+      "D" => %Step{ job: "D", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D", "F"]), children: MapSet.new([]), end_time: nil },
+      "F" => %Step{ job: "F", parents: MapSet.new(["C"]), children: MapSet.new(["E"]), end_time: nil }
     }
 
     assert actual == expected
@@ -56,11 +56,11 @@ defmodule Day7Test do
 
   test "get next step correctly when there are multiple" do
     steps_map = %{
-      "A" => %Step{ job: "A", parents: MapSet.new([]), children: MapSet.new(["B", "D"]) },
-      "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]) },
-      "D" => %Step{ job: "D", parents: MapSet.new(["A"]), children: MapSet.new(["E"]) },
-      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D", "F"]), children: MapSet.new([]) },
-      "F" => %Step{ job: "F", parents: MapSet.new([]), children: MapSet.new(["E"]) }
+      "A" => %Step{ job: "A", parents: MapSet.new([]), children: MapSet.new(["B", "D"]), end_time: nil },
+      "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "D" => %Step{ job: "D", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D", "F"]), children: MapSet.new([]), end_time: nil },
+      "F" => %Step{ job: "F", parents: MapSet.new([]), children: MapSet.new(["E"]), end_time: nil }
     }
 
     actual = steps_map |> Day7.get_next_step()
@@ -84,11 +84,11 @@ defmodule Day7Test do
 
     actual = Day7.delete_step(steps_map, next_step)
     expected = %{
-      "A" => %Step{ job: "A", parents: MapSet.new([]), children: MapSet.new(["B", "D"]) },
-      "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]) },
-      "D" => %Step{ job: "D", parents: MapSet.new(["A"]), children: MapSet.new(["E"]) },
-      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D", "F"]), children: MapSet.new([]) },
-      "F" => %Step{ job: "F", parents: MapSet.new([]), children: MapSet.new(["E"]) }
+      "A" => %Step{ job: "A", parents: MapSet.new([]), children: MapSet.new(["B", "D"]), end_time: nil },
+      "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "D" => %Step{ job: "D", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D", "F"]), children: MapSet.new([]), end_time: nil },
+      "F" => %Step{ job: "F", parents: MapSet.new([]), children: MapSet.new(["E"]), end_time: nil }
     }
 
     assert actual == expected
@@ -155,13 +155,28 @@ defmodule Day7Test do
     assert actual == expected
   end
 
+  test "start step correctly", state do
+    steps_map = state.steps |> Day7.build_steps_struct()
+
+    actual = Day7.start_step(steps_map, "C", 62)
+    expected = %{
+      "A" => %Step{ job: "A", parents: MapSet.new(["C"]), children: MapSet.new(["B", "D"]), end_time: nil },
+      "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "C" => %Step{ job: "C", parents: MapSet.new(), children: MapSet.new(["A", "F"]), end_time: 62 },
+      "D" => %Step{ job: "D", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
+      "E" => %Step{ job: "E", parents: MapSet.new(["B", "D", "F"]), children: MapSet.new([]), end_time: nil },
+      "F" => %Step{ job: "F", parents: MapSet.new(["C"]), children: MapSet.new(["E"]), end_time: nil }
+    }
+    assert actual == expected
+  end
+
   test "check whether step is completed is correct", state do
     steps_map = state.steps |> Day7.build_steps_struct()
 
     actual = Day7.is_step_completed?(steps_map, "C", 0)
     assert actual == false
 
-    steps_map = %{steps_map | "C" => %{Map.get(steps_map, "C") | end_time: 62}}
+    steps_map = Day7.start_step(steps_map, "C", 62)
     actual = Day7.is_step_completed?(steps_map, "C", 62)
     assert actual == false
 
