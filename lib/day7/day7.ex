@@ -110,11 +110,11 @@ defmodule AdventOfCode2018.Day7 do
     if is_nil(end_time), do: false, else: end_time < current_time
   end
 
-  def delete_step_part2(steps_map, step, current_time) do
+  def delete_step_part2(steps_map, steps_in_progress, step, current_time) do
     if is_step_completed?(steps_map, step, current_time) do
-      delete_step(steps_map, step)
+      {delete_step(steps_map, step), MapSet.delete(steps_in_progress, step)}
     else
-      steps_map
+      {steps_map, steps_in_progress}
     end
   end
 end
