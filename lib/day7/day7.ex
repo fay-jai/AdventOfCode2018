@@ -100,8 +100,8 @@ defmodule AdventOfCode2018.Day7 do
 
   def workers_available?(workers), do: MapSet.size(workers) < @num_workers
 
-  def start_step(steps_map, step, end_time) do
-    updated_step_struct = %{Map.get(steps_map, step) | end_time: end_time}
+  def start_step(steps_map, step, current_time) do
+    updated_step_struct = %{Map.get(steps_map, step) | end_time: current_time + @job_times[step] - 1}
     Map.put(steps_map, step, updated_step_struct)
   end
 
@@ -116,14 +116,5 @@ defmodule AdventOfCode2018.Day7 do
     else
       steps_map
     end
-  end
-
-  def add_step_to_worker_queue(worker_queue, step, current_time) do
-    job = %{ job: step, end_time: current_time + @job_times[step] - 1 }
-    [job | worker_queue]
-  end
-
-  def remove_completed_steps_from_worker_queue(worker_queue, current_time) do
-    worker_queue |> Enum.reject(fn (%{end_time: end_time}) -> end_time < current_time end)
   end
 end

@@ -103,25 +103,6 @@ defmodule Day7Test do
     assert actual == expected
   end
 
-  test "add step to worker queue correctly" do
-    actual = Day7.add_step_to_worker_queue([], "C", 0)
-    expected = [%{job: "C", end_time: 62}]
-
-    assert actual == expected
-  end
-
-  test "remove completed steps from worker queue correctly" do
-    worker_queue = [
-      %{job: "C", end_time: 62}
-    ]
-
-    Enum.each(0..62, fn (current_time) ->
-      assert Day7.remove_completed_steps_from_worker_queue(worker_queue, current_time) == worker_queue
-    end)
-
-    assert Day7.remove_completed_steps_from_worker_queue(worker_queue, 63) == []
-  end
-
   test "get available steps correctly", state do
     steps_map = state.steps |> Day7.build_steps_struct()
 
@@ -158,7 +139,7 @@ defmodule Day7Test do
   test "start step correctly", state do
     steps_map = state.steps |> Day7.build_steps_struct()
 
-    actual = Day7.start_step(steps_map, "C", 62)
+    actual = Day7.start_step(steps_map, "C", 0)
     expected = %{
       "A" => %Step{ job: "A", parents: MapSet.new(["C"]), children: MapSet.new(["B", "D"]), end_time: nil },
       "B" => %Step{ job: "B", parents: MapSet.new(["A"]), children: MapSet.new(["E"]), end_time: nil },
@@ -176,7 +157,7 @@ defmodule Day7Test do
     actual = Day7.is_step_completed?(steps_map, "C", 0)
     assert actual == false
 
-    steps_map = Day7.start_step(steps_map, "C", 62)
+    steps_map = Day7.start_step(steps_map, "C", 0)
     actual = Day7.is_step_completed?(steps_map, "C", 62)
     assert actual == false
 
@@ -190,7 +171,7 @@ defmodule Day7Test do
     actual = Day7.delete_step_part2(steps_map, "C", 0)
     assert actual == steps_map
 
-    steps_map = Day7.start_step(steps_map, "C", 62)
+    steps_map = Day7.start_step(steps_map, "C", 0)
     actual = Day7.delete_step_part2(steps_map, "C", 0)
     assert actual == steps_map
 
