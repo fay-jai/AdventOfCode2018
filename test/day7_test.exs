@@ -346,4 +346,14 @@ defmodule Day7Test do
     updated_steps_in_progress = MapSet.new()
     assert actual == {updated_steps_map, updated_steps_in_progress}
   end
+
+  test "get total time correctly", state do
+    steps_map = state.steps |> Day7.build_steps_struct()
+    steps_in_progress = MapSet.new()
+    current_time = 0
+
+    actual = Day7.total_time(steps_map, steps_in_progress, current_time)
+    expected = 253
+    assert actual == expected
+  end
 end

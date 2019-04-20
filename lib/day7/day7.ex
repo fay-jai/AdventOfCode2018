@@ -39,6 +39,12 @@ defmodule AdventOfCode2018.Day7 do
     |> List.to_string()
   end
 
+  def part2() do
+    Helpers.read_file(7)
+    |> build_steps_struct()
+    |> total_time(MapSet.new(), 0)
+  end
+
   def parse_steps(steps_input) do
     steps_input
     |> String.split("\n", trim: true)
@@ -91,12 +97,11 @@ defmodule AdventOfCode2018.Day7 do
   end
 
   # Part 2 Helpers
-  def part2(steps_map, steps_in_progress, current_time) do
-    # For each step in steps_in_progress:
-      # If step is completed as of current_time, then update steps_map by deleting step and removing step from steps_in_progress
-    # While steps_in_progress has space to take on additional steps and there are steps available:
-        # Update steps_map to add an end_time to the step and add step to steps_in_progress
-    # Recursively call part2 with current_time + 1
+  def total_time(steps_map, _, current_time) when map_size(steps_map) == 0, do: current_time - 1
+  def total_time(steps_map, steps_in_progress, current_time) do
+    {updated_steps_map, updated_steps_in_progress} = delete_completed_steps(steps_map, steps_in_progress, current_time)
+    {updated_steps_map, updated_steps_in_progress} = add_steps(updated_steps_map, updated_steps_in_progress, current_time)
+    total_time(updated_steps_map, updated_steps_in_progress, current_time + 1)
   end
 
   def get_next_available_steps(steps_map) do
@@ -127,6 +132,9 @@ defmodule AdventOfCode2018.Day7 do
   end
 
   def delete_completed_steps(steps_map, steps_in_progress, current_time) do
+    # For each step in steps_in_progress:
+      # If step is completed as of current_time, then update steps_map by deleting step and removing step from steps_in_progress
+
     steps_in_progress
     |> MapSet.to_list()
     |> Enum.reduce({steps_map, steps_in_progress}, fn (step, {sm, sip}) ->
@@ -135,6 +143,9 @@ defmodule AdventOfCode2018.Day7 do
   end
 
   def add_steps(steps_map, steps_in_progress, current_time) do
+    # While steps_in_progress has space to take on additional steps and there are steps available:
+      # Update steps_map to add an end_time to the step and add step to steps_in_progress
+
     _add_steps(
       steps_map,
       steps_in_progress,
