@@ -51,6 +51,7 @@ defmodule AdventOfCode2018.Day7 do
     |> Enum.map(fn (<< "Step ", parent::bytes-size(1), " must be finished before step ", child::bytes-size(1), " can begin." >>) -> [parent, child] end)
   end
 
+  # Returns a map where each key in the map refers to a `step` and the value corresponds to a `STEP` struct
   def build_steps_struct(steps_input) do
     steps_input
     |> parse_steps()
