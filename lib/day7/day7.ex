@@ -2,35 +2,19 @@ defmodule AdventOfCode2018.Day7 do
   alias AdventOfCode2018.Day7.Step
   alias AdventOfCode2018.Helpers
 
+  @typedoc """
+  A step is a single letter string (i.e. "A").
+  """
+  @type step :: String.t()
+
+  @typedoc """
+  A steps_map consists of steps and their corresponding Step struct.
+  """
+  @type steps_map :: %{required(step) => %Step{}}
+
   @num_workers 5
-  @job_times %{
-    "A" => 61,
-    "B" => 62,
-    "C" => 63,
-    "D" => 64,
-    "E" => 65,
-    "F" => 66,
-    "G" => 67,
-    "H" => 68,
-    "I" => 69,
-    "J" => 70,
-    "K" => 71,
-    "L" => 72,
-    "M" => 73,
-    "N" => 74,
-    "O" => 75,
-    "P" => 76,
-    "Q" => 77,
-    "R" => 78,
-    "S" => 79,
-    "T" => 80,
-    "U" => 81,
-    "V" => 82,
-    "W" => 83,
-    "X" => 84,
-    "Y" => 85,
-    "Z" => 86,
-  }
+  @jobs for n <- ?A..?Z, do: << n :: utf8 >>
+  @job_times @jobs |> Enum.with_index(61) |> Enum.reduce(%{}, fn ({job, time}, memo) -> Map.put(memo, job, time) end)
 
   def part1() do
     Helpers.read_file(7)
@@ -45,13 +29,14 @@ defmodule AdventOfCode2018.Day7 do
     |> total_time(MapSet.new(), 0)
   end
 
+  @spec parse_steps(String.t()) :: [[step, ...]]
   def parse_steps(steps_input) do
     steps_input
     |> String.split("\n", trim: true)
     |> Enum.map(fn (<< "Step ", parent::bytes-size(1), " must be finished before step ", child::bytes-size(1), " can begin." >>) -> [parent, child] end)
   end
 
-  # Returns a map where each key in the map refers to a `step` and the value corresponds to a `STEP` struct
+  @spec build_steps_struct([[step, ...]]) :: steps_map
   def build_steps_struct(steps_input) do
     steps_input
     |> parse_steps()
@@ -66,6 +51,7 @@ defmodule AdventOfCode2018.Day7 do
   end
 
   # Part 1 Helpers
+  @spec get_next_step(steps_map) :: step
   def get_next_step(steps_map) do
     steps_map
     |> Enum.filter(fn ({_, %Step{parents: parents}}) -> MapSet.size(parents) == 0 end)
@@ -74,6 +60,7 @@ defmodule AdventOfCode2018.Day7 do
     |> List.first()
   end
 
+  @spec delete_step(steps_map, step) :: steps_map
   def delete_step(steps_map, step) do
     updated_steps_map = steps_map |> Map.delete(step)
 
@@ -88,6 +75,7 @@ defmodule AdventOfCode2018.Day7 do
         end)
   end
 
+  @spec process_steps(steps_map, [step, ...]) :: [step, ...]
   def process_steps(steps_map, results) when map_size(steps_map) == 0, do: Enum.reverse(results)
   def process_steps(steps_map, results) do
     next_step = get_next_step(steps_map)
@@ -98,6 +86,7 @@ defmodule AdventOfCode2018.Day7 do
   end
 
   # Part 2 Helpers
+  @spec total_time(steps_map, MapSet.t(step), integer) :: integer
   def total_time(steps_map, _, current_time) when map_size(steps_map) == 0, do: current_time - 1
   def total_time(steps_map, steps_in_progress, current_time) do
     {updated_steps_map, updated_steps_in_progress} = delete_completed_steps(steps_map, steps_in_progress, current_time)
@@ -105,6 +94,7 @@ defmodule AdventOfCode2018.Day7 do
     total_time(updated_steps_map, updated_steps_in_progress, current_time + 1)
   end
 
+  @spec get_next_available_steps(steps_map) :: [step, ...]
   def get_next_available_steps(steps_map) do
     steps_map
     |> Enum.filter(fn ({_, %Step{parents: parents, end_time: end_time}}) -> MapSet.size(parents) == 0 && is_nil(end_time) end)
@@ -112,18 +102,22 @@ defmodule AdventOfCode2018.Day7 do
     |> Enum.sort()
   end
 
+  @spec can_handle_more_steps?(MapSet.t(step)) :: boolean
   def can_handle_more_steps?(steps_in_progress), do: MapSet.size(steps_in_progress) < @num_workers
 
+  @spec start_step(steps_map, step, integer) :: steps_map
   def start_step(steps_map, step, current_time) do
     updated_step_struct = %{Map.get(steps_map, step) | end_time: current_time + @job_times[step] - 1}
     Map.put(steps_map, step, updated_step_struct)
   end
 
+  @spec is_step_completed?(steps_map, step, integer) :: boolean
   def is_step_completed?(steps_map, step, current_time) do
     end_time = steps_map[step].end_time
     if is_nil(end_time), do: false, else: end_time < current_time
   end
 
+  @spec delete_step_part2(steps_map, MapSet.t(step), step, integer) :: {steps_map, MapSet.t(step)}
   def delete_step_part2(steps_map, steps_in_progress, step, current_time) do
     if is_step_completed?(steps_map, step, current_time) do
       {delete_step(steps_map, step), MapSet.delete(steps_in_progress, step)}
@@ -132,6 +126,7 @@ defmodule AdventOfCode2018.Day7 do
     end
   end
 
+  @spec delete_completed_steps(steps_map, MapSet.t(step), integer) :: {steps_map, MapSet.t(step)}
   def delete_completed_steps(steps_map, steps_in_progress, current_time) do
     # For each step in steps_in_progress:
       # If step is completed as of current_time, then update steps_map by deleting step and removing step from steps_in_progress
@@ -143,6 +138,7 @@ defmodule AdventOfCode2018.Day7 do
     end)
   end
 
+  @spec add_steps(steps_map, MapSet.t(step), integer) :: {steps_map, MapSet.t(step)}
   def add_steps(steps_map, steps_in_progress, current_time) do
     # While steps_in_progress has space to take on additional steps and there are steps available:
       # Update steps_map to add an end_time to the step and add step to steps_in_progress
@@ -156,6 +152,7 @@ defmodule AdventOfCode2018.Day7 do
     )
   end
 
+  @spec _add_steps(steps_map, MapSet.t(step), integer, boolean, boolean) :: {steps_map, MapSet.t(step)}
   def _add_steps(steps_map, steps_in_progress, current_time, _workers_available = true, _steps_available = true) do
     [next_step | _] = get_next_available_steps(steps_map)
 
