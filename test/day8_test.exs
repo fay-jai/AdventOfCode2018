@@ -13,7 +13,12 @@ defmodule Day8Test do
   test "parse input tree correctly", state do
     actual = Day8.parse_tree(state.tree)
     expected = [2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2]
+    assert actual == expected
+  end
 
+  test "recurse correctly", state do
+    actual = state.tree |> Day8.parse_tree() |> Day8.recurse()
+    expected = [[1, 1, 2], [2], [99], [10, 11, 12]]
     assert actual == expected
   end
 end
